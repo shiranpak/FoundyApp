@@ -1,13 +1,16 @@
 package com.example.foundyapp;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
+import androidx.navigation.NavHost;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -20,6 +23,7 @@ public class DrawerActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityDrawerBinding binding;
+    private NavController navCtl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,9 @@ public class DrawerActivity extends AppCompatActivity {
 
         binding = ActivityDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        NavHost navHost = (NavHost)getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_drawer);
+        navCtl = navHost.getNavController();
 
         setSupportActionBar(binding.appBarDrawer.toolbar);
         binding.appBarDrawer.fab.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +61,24 @@ public class DrawerActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.drawer, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(!super.onOptionsItemSelected(item)) {
+            switch (item.getItemId()) {
+                case R.id.search_by_place_btn:
+                    navCtl.navigate(R.id.searchByPlaceFragment);
+                    break;
+                case R.id.advanced_search_btn:
+                    navCtl.navigate(R.id.advancedSearchFragment);
+                    break;
+            }
+        }
+        else{
+            return true;
+        }
+        return false;
     }
 
     @Override

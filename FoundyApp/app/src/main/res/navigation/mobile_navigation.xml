@@ -22,4 +22,14 @@
         android:name="com.example.foundyapp.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+    <fragment
+        android:id="@+id/advancedSearchFragment"
+        android:name="com.example.foundyapp.AdvancedSearchFragment"
+        android:label="fragment_advanced_search"
+        tools:layout="@layout/fragment_advanced_search" />
+    <fragment
+        android:id="@+id/searchByPlaceFragment"
+        android:name="com.example.foundyapp.SearchByPlaceFragment"
+        android:label="fragment_search_by_place"
+        tools:layout="@layout/fragment_search_by_place" />
 </navigation>

@@ -2,8 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:icon="?android:attr/actionModeWebSearchDrawable"
+        android:title="Item"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/advanced_search_btn"
+                android:orderInCategory="100"
+                android:title="Advanced search"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/search_by_place_btn"
+                android:title="Search by place"
+                app:showAsAction="never" />
+        </menu>
+    </item>
 </menu>
