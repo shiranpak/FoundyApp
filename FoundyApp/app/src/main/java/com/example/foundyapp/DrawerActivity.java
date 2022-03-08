@@ -1,6 +1,8 @@
 package com.example.foundyapp;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -10,7 +12,6 @@ import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
-import androidx.navigation.NavHost;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -23,7 +24,8 @@ public class DrawerActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityDrawerBinding binding;
-    private NavController navCtl;
+    private NavController navController;
+    private MenuItem search_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +33,6 @@ public class DrawerActivity extends AppCompatActivity {
 
         binding = ActivityDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        NavHost navHost = (NavHost)getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_drawer);
-        navCtl = navHost.getNavController();
 
         setSupportActionBar(binding.appBarDrawer.toolbar);
         binding.appBarDrawer.fab.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +50,7 @@ public class DrawerActivity extends AppCompatActivity {
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_drawer);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_drawer);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
@@ -60,6 +59,7 @@ public class DrawerActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.drawer, menu);
+//        search_btn = menu.findItem(R.id.search_menu_btn);
         return true;
     }
 
@@ -67,12 +67,18 @@ public class DrawerActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(!super.onOptionsItemSelected(item)) {
             switch (item.getItemId()) {
+
                 case R.id.search_by_place_btn:
-                    navCtl.navigate(R.id.searchByPlaceFragment);
-                    break;
+                    navController.navigate(R.id.searchByPlaceFragment);
+//                    search_btn.setVisible(false);
+                    return true;
                 case R.id.advanced_search_btn:
-                    navCtl.navigate(R.id.advancedSearchFragment);
-                    break;
+                    navController.navigate(R.id.advancedSearchFragment);
+//                    search_btn.setVisible(false);
+                    return true;
+                default:
+//                    search_btn.setVisible(true);
+                    NavigationUI.onNavDestinationSelected(item,navController);
             }
         }
         else{

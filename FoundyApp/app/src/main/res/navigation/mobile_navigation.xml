@@ -25,11 +25,11 @@
     <fragment
         android:id="@+id/advancedSearchFragment"
         android:name="com.example.foundyapp.AdvancedSearchFragment"
-        android:label="fragment_advanced_search"
+        android:label="Advanced search"
         tools:layout="@layout/fragment_advanced_search" />
     <fragment
         android:id="@+id/searchByPlaceFragment"
         android:name="com.example.foundyapp.SearchByPlaceFragment"
-        android:label="fragment_search_by_place"
+        android:label="Search by place"
         tools:layout="@layout/fragment_search_by_place" />
 </navigation>
