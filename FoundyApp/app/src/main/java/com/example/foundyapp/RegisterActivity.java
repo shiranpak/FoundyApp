@@ -2,5 +2,5 @@ package com.example.foundyapp;
 
 import android.app.Activity;
 
-public class LoginFragment extends Activity {
+public class RegisterActivity extends Activity {
 }
