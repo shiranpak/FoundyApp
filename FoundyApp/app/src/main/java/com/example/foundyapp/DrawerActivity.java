@@ -29,6 +29,11 @@ public class DrawerActivity extends AppCompatActivity {
     private NavController navController;
     private MenuItem search_btn;
     private BottomNavigationView bottomNavigationView;
+
+    /*FirstFragment firstFragment = new FirstFragment();
+    SecondFragment secondFragment = new SecondFragment();
+    ThirdFragment thirdFragment = new ThirdFragment();*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,13 +42,7 @@ public class DrawerActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarDrawer.toolbar);
-        /*binding.appBarDrawer.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
@@ -56,17 +55,25 @@ public class DrawerActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.bottom_nav_losts_btn);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                String id = item.getTitle().toString();
-                Log.d("tag","val = " +id);
-                switch(id){
-                    //Todo: open fragments
+                switch (item.getItemId()) {
+                   /* case R.id.bottom_nav_losts_btn:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, firstFragment).commit();
+                        return true;
+
+                    case R.id.bottom_nav_add_btn:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, secondFragment).commit();
+                        return true;
+
+                    case R.id.bottom_nav_findings_btn:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, thirdFragment).commit();
+                        return true;*/
                 }
-                return true;
+                return false;
             }
         });
 

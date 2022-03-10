@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/page_1"
+        android:id="@+id/bottom_nav_losts_btn"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_foreground"
         android:title="Losts" />
     <item
-        android:id="@+id/page_2"
+        android:id="@+id/bottom_nav_add_btn"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_foreground"
         android:title="Add+"/>
     <item
-        android:id="@+id/page_3"
+        android:id="@+id/bottom_nav_findings_btn"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_foreground"
         android:title="Findings"/>
