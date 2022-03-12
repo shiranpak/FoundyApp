@@ -1,14 +1,6 @@
 package com.example.foundyapp;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.app.Activity;
 
-import android.os.Bundle;
-
-public class RegisterActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
-    }
+public class RegisterActivity extends Activity {
 }

@@ -36,4 +36,71 @@
             android:text="Losts" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <Switch
+        android:id="@+id/use_my_location_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
+        android:text="Use my location"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/findings_losts_toggle_group" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_autoComplete"
+        android:layout_width="250dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/use_my_location_toggle">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_background"
+        card_view:cardCornerRadius="4dp"
+        card_view:contentPadding="0dp">
+
+        <fragment
+            android:id="@+id/place_autocomplete_fragment"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent">
+        </fragment>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView"
+        android:name="com.example.foundyapp.MapFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_autoComplete" />
+
+    <Button
+        android:id="@+id/textButton"
+        style="@style/Widget.MaterialComponents.Button.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Search"
+        android:visibility="invisible"
+        app:icon="@android:drawable/ic_menu_search"
+        app:layout_constraintBottom_toBottomOf="@+id/fragmentContainerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

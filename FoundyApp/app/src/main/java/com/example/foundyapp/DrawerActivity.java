@@ -7,6 +7,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
@@ -26,6 +28,11 @@ public class DrawerActivity extends AppCompatActivity {
     private ActivityDrawerBinding binding;
     private NavController navController;
     private MenuItem search_btn;
+    private BottomNavigationView bottomNavigationView;
+
+    /*FirstFragment firstFragment = new FirstFragment();
+    SecondFragment secondFragment = new SecondFragment();
+    ThirdFragment thirdFragment = new ThirdFragment();*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +42,7 @@ public class DrawerActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarDrawer.toolbar);
-        binding.appBarDrawer.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
@@ -53,6 +54,29 @@ public class DrawerActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_drawer);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.bottom_nav_losts_btn);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                   /* case R.id.bottom_nav_losts_btn:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, firstFragment).commit();
+                        return true;
+
+                    case R.id.bottom_nav_add_btn:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, secondFragment).commit();
+                        return true;
+
+                    case R.id.bottom_nav_findings_btn:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, thirdFragment).commit();
+                        return true;*/
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override
