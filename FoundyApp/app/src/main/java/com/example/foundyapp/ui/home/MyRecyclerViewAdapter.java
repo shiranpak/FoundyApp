@@ -1,60 +1,54 @@
 package com.example.foundyapp.ui.home;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.foundyapp.databinding.FragmentItemBinding;
-import com.example.foundyapp.ui.home.PlaceholderContent.PlaceholderItem;
-import com.example.foundyapp.databinding.FragmentItemBinding;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.foundyapp.R;
+//import com.example.foundyapp.databinding.FragmentItemBinding;
+//import com.example.foundyapp.databinding.FragmentItemBinding;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
+public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.MyViewHolder> {
 
-    private final List<PlaceholderItem> mValues;
+    List<String> data = new ArrayList<>();
 
-    public MyRecyclerViewAdapter(List<PlaceholderItem> items) {
-        mValues = items;
+    MyRecyclerViewAdapter(){
+        for(int i=0; i<10; i++) {
+            data.add("element "+i);
+        }
+    }
+
+    @NonNull
+    @Override
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_row,parent,false));
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-
-        return new ViewHolder(FragmentItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
-
-    }
-
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        holder.tv.setText(data.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return data.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public PlaceholderItem mItem;
+    static  class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewHolder(FragmentItemBinding binding) {
-            super(binding.getRoot());
-            mIdView = binding.itemNumber;
-            mContentView = binding.content;
-        }
+        TextView tv;
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+        public MyViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tv = itemView.findViewById(R.id.textView2);
         }
     }
 }
