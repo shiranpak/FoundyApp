@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".LoginActivity">
 
     <TextView
@@ -20,36 +21,38 @@
         android:id="@+id/tv_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/tag"
-        android:textSize="17sp"
-        android:fontFamily="@font/roboto_regular"
+        android:layout_above="@id/et_email"
         android:layout_marginStart="25dp"
-        android:layout_marginBottom="50dp"
-        android:layout_above="@id/et_email"/>
+        android:layout_marginBottom="13dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/tag"
+        android:textSize="17sp" />
+
 
     <EditText
         android:id="@+id/et_email"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="@string/e_mail"
+        android:layout_above="@id/et_password"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:padding="15dp"
-        android:inputType="textEmailAddress"
+        android:layout_marginBottom="-18dp"
         android:fontFamily="@font/roboto_regular"
-        android:layout_above="@id/et_password"
+        android:hint="@string/e_mail"
+        android:inputType="textEmailAddress"
+        android:padding="15dp"
         android:textSize="15sp" />
 
     <EditText
         android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-
         android:layout_centerInParent="true"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="20dp"
         android:fontFamily="@font/roboto_regular"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:padding="15dp"
         android:textSize="15sp" />
@@ -60,26 +63,45 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/et_password"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="12dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="15dp"
         android:fontFamily="@font/roboto_regular"
-        android:textColor="@android:color/white"
-        android:text="@string/login"/>
-
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_above="@id/swipeRight"
-        android:layout_centerHorizontal="true"/>
+        android:text="@string/login"
+        android:textColor="@android:color/white" />
 
     <TextView
-        android:id="@+id/swipeRight"
-        android:layout_width="wrap_content"
+        android:id="@+id/text_register"
+        android:layout_width="106dp"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:fontFamily="@font/roboto_regular"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"/>
+        android:layout_below="@+id/btn_login"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="52dp"
+        android:text="@string/register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_login"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/text_passforgot"
+        android:layout_width="137dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_login"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="33dp"
+        android:layout_marginEnd="55dp"
+        android:layout_toStartOf="@+id/text_register"
+        android:text="forgot password?"
+        app:layout_constraintEnd_toStartOf="@+id/text_register"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_register"
+        tools:ignore="MissingConstraints" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </RelativeLayout>

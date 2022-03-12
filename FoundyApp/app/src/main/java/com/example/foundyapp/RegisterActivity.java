@@ -1,6 +1,137 @@
 package com.example.foundyapp;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Patterns;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends Activity {
-}
+    private FirebaseAuth mAuth ;
+    private EditText password;
+    private EditText email;
+    private EditText reenterpass;
+    private EditText fullname;
+    private Button btn;
+    private ProgressBar progressBar;
+
+    boolean isEmail(String text) {
+
+        return (!TextUtils.isEmpty(text) && Patterns.EMAIL_ADDRESS.matcher(text).matches());
+    }
+
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_register);
+        //firebase instance
+        mAuth = FirebaseAuth.getInstance();
+
+        password=findViewById(R.id.et_password);
+        reenterpass=findViewById(R.id.et_repassword);
+        fullname = findViewById(R.id.et_name);
+        email=findViewById(R.id.et_email);
+        btn=findViewById(R.id.btn_register);
+        progressBar = findViewById(R.id.progressbar);
+
+        btn.setOnClickListener(v -> registernewuser());
+    }
+
+    public void registernewuser () {
+        String str_name= fullname.getText().toString();
+        String str_email = email.getText().toString();
+        String str_pass= password.getText().toString();
+        String str_repass= reenterpass.getText().toString();
+
+        if(str_name.isEmpty()) {
+            this.fullname.setError("Please enter your full name");
+        }
+
+        if(str_email.isEmpty()) {
+            this.email.setError("Please enter email");
+        }
+        if(!isEmail(str_email))
+        {
+            email.setError("Invalid email");
+        }
+
+        if(str_pass.length()<6) {
+            this.password.setError("Password must be at least 6 characters ");
+        }
+        if(str_repass.isEmpty() || str_pass.compareTo(str_repass)!=0) {
+            this.reenterpass.setError("Please re type your password");
+        }
+        else
+        mAuth.createUserWithEmailAndPassword(str_email, str_pass)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(getApplicationContext(),
+                                "Registration successful!",
+                                Toast.LENGTH_LONG)
+                                .show();
+
+                        // hide the progress bar
+                        progressBar.setVisibility(View.GONE);
+
+                        // if the user created intent to login activity
+                        Intent intent
+                                = new Intent(RegisterActivity.this,
+                                LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    else{
+                        // Registration failed
+                        Toast.makeText(
+                                getApplicationContext(),
+                                "Registration failed!!"
+                                        + " Please try again later",
+                                Toast.LENGTH_LONG)
+                                .show();
+
+                        // hide the progress bar
+                        progressBar.setVisibility(View.GONE);
+
+                    }
+
+                });
+        
+        
+        
+    }
+
+    public  void checkData(String name, String email, String pass, String pass2) {
+
+        if(name.isEmpty()) {
+            this.fullname.setError("Please enter your full name");
+        }
+
+       if(email.isEmpty()) {
+           this.email.setError("Please enter email");
+       }
+
+       if(pass.isEmpty()) {
+           this.password.setError("Please enter password");
+       }
+       if(pass2.isEmpty() || pass.compareTo(pass2)!=0) {
+           this.reenterpass.setError("Please re type your password");
+       }
+    }
+
+
+
+    }
+
+
+
