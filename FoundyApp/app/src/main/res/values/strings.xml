@@ -15,6 +15,7 @@
     <!--login and registers strings-->
     <string name="swipe_left_for_register">Swipe Left for Register</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="password">Password</string>
     <string name="e_mail">Email</string>
     <string name="tag">Let\'s join us and \nBuild your relationship with others</string>

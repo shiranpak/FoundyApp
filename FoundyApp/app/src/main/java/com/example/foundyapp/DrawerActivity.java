@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.ListView;
 
+import com.example.foundyapp.model.UserSession;
 import com.example.foundyapp.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -32,6 +33,7 @@ public class DrawerActivity extends AppCompatActivity {
     private NavController navController;
     private MenuItem search_btn;
     private BottomNavigationView bottomNavigationView;
+    UserSession session;
 
     /*FirstFragment firstFragment = new FirstFragment();
     SecondFragment secondFragment = new SecondFragment();
@@ -41,12 +43,11 @@ public class DrawerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        session = new UserSession(getApplicationContext());
 
         binding = ActivityDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         setSupportActionBar(binding.appBarDrawer.toolbar);
-
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
@@ -58,6 +59,17 @@ public class DrawerActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_drawer);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        //create login session
+        session.checkLogin();
+        //logout from app
+        navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                session.logoutUser();
+                return true;
+            }
+        });
 
 
 
