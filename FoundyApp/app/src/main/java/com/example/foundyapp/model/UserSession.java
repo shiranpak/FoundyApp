@@ -48,6 +48,7 @@ public class UserSession {
         editor.putString(KEY_PASSWORD, KEY_EMAIL);
         // Storing email in pref
         editor.putString(KEY_EMAIL, email);
+        editor.putString(KEY_PASSWORD,password);
         editor.apply();
     }
 

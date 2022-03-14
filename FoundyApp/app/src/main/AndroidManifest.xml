@@ -28,11 +28,12 @@
             android:value="AIzaSyBRNh4ht4hq9vjS5fuezo-5l8jEKx82ARo" />
 
         <activity
-            android:name=".DrawerActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.FoundyApp.NoActionBar">
         </activity>
-        <activity android:name=".LoginActivity" android:exported="true">
+        <activity android:name=".DrawerActivity" android:exported="true"
+            android:theme="@style/Theme.FoundyApp.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
