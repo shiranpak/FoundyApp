@@ -97,7 +97,7 @@ public class LoginActivity extends Activity {
 
                     // hide the progress bar
                     progressbar.setVisibility(View.GONE);
-                    session.createUserLoginSession(email,password);
+                    session.createUserLoginSession(password,email);
                     // if sign-in is successful
                     // intent to home activity
                     Intent intent
