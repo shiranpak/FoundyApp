@@ -20,6 +20,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -43,11 +44,18 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class MapFragment extends Fragment  {
+    FirebaseFirestore db;
 
     private AutocompleteSupportFragment autocompleteFragment;
     private final String TAG = MapFragment.class.getSimpleName();
@@ -87,66 +95,91 @@ public class MapFragment extends Fragment  {
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Nullable
-            @Override
-            public View getInfoContents(@NonNull Marker marker) {
-                // Inflate the layouts for the info window, title and snippet.
-                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
-                        (FrameLayout) getView().findViewById(R.id.map), false);
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            map = googleMap;
+            map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                @Nullable
+                @Override
+                public View getInfoContents(@NonNull Marker marker) {
+                    // Inflate the layouts for the info window, title and snippet.
+                    View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
+                            (FrameLayout) getView().findViewById(R.id.map), false);
 
-                TextView title = infoWindow.findViewById(R.id.title);
-                title.setText(marker.getTitle());
+                    TextView title = infoWindow.findViewById(R.id.title);
+                    title.setText(marker.getTitle());
 
-                TextView snippet = infoWindow.findViewById(R.id.snippet);
-                snippet.setText(marker.getSnippet());
+                    TextView snippet = infoWindow.findViewById(R.id.snippet);
+                    snippet.setText(marker.getSnippet());
 
-                return infoWindow;
+                    return infoWindow;
+                }
+
+                @Nullable
+                @Override
+                public View getInfoWindow(@NonNull Marker marker) {
+                    return null;
+                }
+            });
+
+            Context mContext = getActivity();
+
+            if (!Places.isInitialized()) {
+                Places.initialize(mContext, getString(R.string.api_key));
             }
 
-            @Nullable
-            @Override
-            public View getInfoWindow(@NonNull Marker marker) {
-                return null;
-            }
-        });
+            //FIREBASE REMOVE!!!!!!!****************** JUST FOR CONCEPT PROOF ****************
+            DocumentReference documentReference = db.collection("MapsData").document("FNZiDevuGzV2U82WYnVq");
+            documentReference.addSnapshotListener((value, error) -> {
+                if (value != null && value.exists()) {
+                    // below line is to create a geo point and we are getting
+                    // geo point from firebase and setting to it.
+                    GeoPoint geoPoint = value.getGeoPoint("geoPoint");
 
-        Context mContext = getActivity();
+                    // getting latitude and longitude from geo point
+                    // and setting it to our location.
+                    LatLng location = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
 
-        if (!Places.isInitialized()) {
-            Places.initialize(mContext, getString(R.string.api_key));
+                    // adding marker to each location on google maps
+                    Marker marker = map.addMarker(new MarkerOptions().position(location).title("Marker"));
+                    marker.showInfoWindow();
+                    // below line is use to move camera.
+                    map.moveCamera(CameraUpdateFactory.newLatLng(location));
+                } else {
+                    Toast.makeText(getActivity(), "Error found is " + error, Toast.LENGTH_SHORT).show();
+                }
+            });
+            //FIREBASE REMOVE!!!!!!!******************
+            map.setOnInfoWindowClickListener(marker -> {
+
+            });
+            placesClient = Places.createClient(getActivity());
+            autocompleteFragment = (AutocompleteSupportFragment)
+                    getParentFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+
+            autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS);
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+
+            // Set up a PlaceSelectionListener to handle the response.
+            // its not working rn because we need to add billing details
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(@NonNull Place place) {
+                    // TODO: Get info about the selected place.
+                    Log.i("Tag", "Place: " + place.getName() + ", " + place.getId());
+                }
+
+
+                @Override
+                public void onError(@NonNull Status status) {
+                    // TODO: Handle the error.
+                    Log.i("Tag", "An error occurred: " + status);
+                }
+            });
+
+            updateLocationUI();
         }
-
-        placesClient = Places.createClient(getActivity());
-        autocompleteFragment = (AutocompleteSupportFragment)
-                getParentFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
-
-        autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS);
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-
-        // Set up a PlaceSelectionListener to handle the response.
-        // its not working rn because we need to add billing details
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(@NonNull Place place) {
-                // TODO: Get info about the selected place.
-                Log.i("Tag", "Place: " + place.getName() + ", " + place.getId());
-            }
-
-
-            @Override
-            public void onError(@NonNull Status status) {
-                // TODO: Handle the error.
-                Log.i("Tag", "An error occurred: " + status);
-            }
-        });
-
-        updateLocationUI();
-    }
     };
 
 
@@ -155,6 +188,7 @@ public class MapFragment extends Fragment  {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        db = FirebaseFirestore.getInstance();
 
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
@@ -167,21 +201,18 @@ public class MapFragment extends Fragment  {
 
         useMyLocation = (Switch) view.getRootView().findViewById(R.id.use_my_location_toggle);
 
-        useMyLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked == true){
-                    // Prompt the user for permission.
-                    getLocationPermission();
+        useMyLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked == true){
+                // Prompt the user for permission.
+                getLocationPermission();
 
-                    // Turn on the My Location layer and the related control on the map.
-                    updateLocationUI();
+                // Turn on the My Location layer and the related control on the map.
+                updateLocationUI();
 
-                    // Get the current location of the device and set the position of the map.
-                    getDeviceLocation();
+                // Get the current location of the device and set the position of the map.
+                getDeviceLocation();
 
-                    showCurrentPlace();
-                }
+                showCurrentPlace();
             }
         });
         // Retrieve location and camera position from saved instance state.
@@ -231,47 +262,44 @@ public class MapFragment extends Fragment  {
             // are the best match for the device's current location.
             @SuppressWarnings("MissingPermission") final Task<FindCurrentPlaceResponse> placeResult =
                     placesClient.findCurrentPlace(request);
-            placeResult.addOnCompleteListener (new OnCompleteListener<FindCurrentPlaceResponse>() {
-                @Override
-                public void onComplete(@NonNull Task<FindCurrentPlaceResponse> task) {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        FindCurrentPlaceResponse likelyPlaces = task.getResult();
+            placeResult.addOnCompleteListener (task -> {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    FindCurrentPlaceResponse likelyPlaces = task.getResult();
 
-                        // Set the count, handling cases where less than 5 entries are returned.
-                        int count;
-                        if (likelyPlaces.getPlaceLikelihoods().size() < M_MAX_ENTRIES) {
-                            count = likelyPlaces.getPlaceLikelihoods().size();
-                        } else {
-                            count = M_MAX_ENTRIES;
-                        }
-
-                        int i = 0;
-                        likelyPlaceNames = new String[count];
-                        likelyPlaceAddresses = new String[count];
-                        likelyPlaceAttributions = new List[count];
-                        likelyPlaceLatLngs = new LatLng[count];
-
-                        for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
-                            // Build a list of likely places to show the user.
-                            likelyPlaceNames[i] = placeLikelihood.getPlace().getName();
-                            likelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
-                            likelyPlaceAttributions[i] = placeLikelihood.getPlace()
-                                    .getAttributions();
-                            likelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-
-                            i++;
-                            if (i > (count - 1)) {
-                                break;
-                            }
-                        }
-
-                        // Show a dialog offering the user the list of likely places, and add a
-                        // marker at the selected place.
-                        MapFragment.this.openPlacesDialog();
+                    // Set the count, handling cases where less than 5 entries are returned.
+                    int count;
+                    if (likelyPlaces.getPlaceLikelihoods().size() < M_MAX_ENTRIES) {
+                        count = likelyPlaces.getPlaceLikelihoods().size();
+                    } else {
+                        count = M_MAX_ENTRIES;
                     }
-                    else {
-                        Log.e(TAG, "Exception: %s", task.getException());
+
+                    int i = 0;
+                    likelyPlaceNames = new String[count];
+                    likelyPlaceAddresses = new String[count];
+                    likelyPlaceAttributions = new List[count];
+                    likelyPlaceLatLngs = new LatLng[count];
+
+                    for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
+                        // Build a list of likely places to show the user.
+                        likelyPlaceNames[i] = placeLikelihood.getPlace().getName();
+                        likelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
+                        likelyPlaceAttributions[i] = placeLikelihood.getPlace()
+                                .getAttributions();
+                        likelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
+
+                        i++;
+                        if (i > (count - 1)) {
+                            break;
+                        }
                     }
+
+                    // Show a dialog offering the user the list of likely places, and add a
+                    // marker at the selected place.
+                    MapFragment.this.openPlacesDialog();
+                }
+                else {
+                    Log.e(TAG, "Exception: %s", task.getException());
                 }
             });
         } else {
@@ -293,27 +321,24 @@ public class MapFragment extends Fragment  {
      */
     private void openPlacesDialog() {
         // Ask the user to choose the place where they are now.
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // The "which" argument contains the position of the selected item.
-                LatLng markerLatLng = likelyPlaceLatLngs[which];
-                String markerSnippet = likelyPlaceAddresses[which];
-                if (likelyPlaceAttributions[which] != null) {
-                    markerSnippet = markerSnippet + "\n" + likelyPlaceAttributions[which];
-                }
-
-                // Add a marker for the selected place, with an info window
-                // showing information about that place.
-                map.addMarker(new MarkerOptions()
-                        .title(likelyPlaceNames[which])
-                        .position(markerLatLng)
-                        .snippet(markerSnippet));
-
-                // Position the map's camera at the location of the marker.
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
-                        DEFAULT_ZOOM));
+        DialogInterface.OnClickListener listener = (dialog, which) -> {
+            // The "which" argument contains the position of the selected item.
+            LatLng markerLatLng = likelyPlaceLatLngs[which];
+            String markerSnippet = likelyPlaceAddresses[which];
+            if (likelyPlaceAttributions[which] != null) {
+                markerSnippet = markerSnippet + "\n" + likelyPlaceAttributions[which];
             }
+
+            // Add a marker for the selected place, with an info window
+            // showing information about that place.
+            map.addMarker(new MarkerOptions()
+                    .title(likelyPlaceNames[which])
+                    .position(markerLatLng)
+                    .snippet(markerSnippet));
+
+            // Position the map's camera at the location of the marker.
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
+                    DEFAULT_ZOOM));
         };
 
         // Display the dialog.
@@ -334,24 +359,21 @@ public class MapFragment extends Fragment  {
         try {
             if (locationPermissionGranted) {
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-                locationResult.addOnCompleteListener(new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
-                            lastKnownLocation = task.getResult();
-                            if (lastKnownLocation != null) {
-                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(lastKnownLocation.getLatitude(),
-                                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                            }
-                        } else {
-                            Log.d(TAG, "Current location is null. Using defaults.");
-                            Log.e(TAG, "Exception: %s", task.getException());
-                            map.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
-                            map.getUiSettings().setMyLocationButtonEnabled(false);
+                locationResult.addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Set the map's camera position to the current location of the device.
+                        lastKnownLocation = task.getResult();
+                        if (lastKnownLocation != null) {
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(lastKnownLocation.getLatitude(),
+                                            lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                         }
+                    } else {
+                        Log.d(TAG, "Current location is null. Using defaults.");
+                        Log.e(TAG, "Exception: %s", task.getException());
+                        map.moveCamera(CameraUpdateFactory
+                                .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
+                        map.getUiSettings().setMyLocationButtonEnabled(false);
                     }
                 });
             }
