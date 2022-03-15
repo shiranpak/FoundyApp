@@ -31,8 +31,7 @@ public class DrawerActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityDrawerBinding binding;
     private NavController navController;
-    private MenuItem search_btn;
-    private BottomNavigationView bottomNavigationView;
+    private CurvedBottomNavigationView curvedBottomNavigationView;
     UserSession session;
 
     /*FirstFragment firstFragment = new FirstFragment();
@@ -71,28 +70,19 @@ public class DrawerActivity extends AppCompatActivity {
             }
         });
 
+        curvedBottomNavigationView = (CurvedBottomNavigationView)findViewById(R.id.bottom_navigation);
+//        curvedBottomNavigationView.inflateMenu(R.menu.bottom_navigation_menu);
+        curvedBottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.bottom_nav_losts_btn:
+//                    getSupportFragmentManager().beginTransaction().replace(R.id.container, firstFragment).commit();
+                    return true;
 
-
-        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.bottom_nav_losts_btn);
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                   /* case R.id.bottom_nav_losts_btn:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.container, firstFragment).commit();
-                        return true;
-
-                    case R.id.bottom_nav_add_btn:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.container, secondFragment).commit();
-                        return true;
-
-                    case R.id.bottom_nav_findings_btn:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.container, thirdFragment).commit();
-                        return true;*/
-                }
-                return false;
+                case R.id.bottom_nav_findings_btn:
+//                    getSupportFragmentManager().beginTransaction().replace(R.id.container, thirdFragment).commit();
+                    return true;
             }
+            return false;
         });
 
     }
