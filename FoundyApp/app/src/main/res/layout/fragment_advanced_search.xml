@@ -85,31 +85,52 @@
         <!--simple text view to show the selected date by the user-->
 
     <!--button to open the material design date picker dialog-->
-    <TextView
-        android:id="@+id/show_selected_date"
-        android:layout_width="142dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="32dp"
-        android:text="Select dates"
-        android:textSize="18sp"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/adv_city_list" />
 
-    <Button
-        android:id="@+id/pick_date_button"
-        android:layout_width="202dp"
+    <LinearLayout
+        android:id="@+id/pick_date_layout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:text="Select Dates"
-        android:textSize="16sp"
-        app:icon="@android:drawable/ic_menu_my_calendar"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/outlinedTextField"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/show_selected_date" />
+        app:layout_constraintTop_toBottomOf="@+id/adv_city_list">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/from_date_tf"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:hint="From Date"
+            app:startIconDrawable="@android:drawable/ic_menu_my_calendar">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/to_date_tf"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:hint="To Date"
+            app:startIconDrawable="@android:drawable/ic_menu_my_calendar">
+            android:hint="To Date">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlinedTextField"
@@ -118,20 +139,20 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
 
+        android:layout_marginEnd="16dp"
         android:hint="Description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pick_date_button">
+        app:layout_constraintTop_toBottomOf="@+id/pick_date_layout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="start"
             android:lines="3"
-            android:maxLines="10"/>
-<!--            android:inputType="textMultiLine" />-->
+            android:maxLines="10" />
+        <!--            android:inputType="textMultiLine" />-->
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button

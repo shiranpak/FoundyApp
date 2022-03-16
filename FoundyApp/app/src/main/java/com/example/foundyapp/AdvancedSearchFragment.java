@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +15,29 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.foundyapp.model.Category;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.Timestamp;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class AdvancedSearchFragment extends Fragment {
 
-    private Button mPickDateButton;
-    private TextView mShowSelectedDateText;
+    private TextInputLayout fromDateTextLayout,toDateTextLayout;
+    private TextInputEditText fromDateTextView,toDateTextView;
     private AutoCompleteTextView textView;
 
     private static final String[] CATEGORIES = new String[] {
@@ -47,8 +59,15 @@ public class AdvancedSearchFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_advanced_search, container, false);
-        mPickDateButton = view.findViewById(R.id.pick_date_button);
-        mShowSelectedDateText = view.findViewById(R.id.show_selected_date);
+
+        fromDateTextLayout = view.findViewById(R.id.from_date_tf);
+        fromDateTextView = (TextInputEditText) fromDateTextLayout.getEditText();
+        fromDateTextView.setShowSoftInputOnFocus(false); //disable keyboard
+
+        toDateTextLayout = view.findViewById(R.id.to_date_tf);
+        toDateTextView = (TextInputEditText) toDateTextLayout.getEditText();
+        toDateTextView.setShowSoftInputOnFocus(false); //disable keyboard
+
         textView = (AutoCompleteTextView) view.findViewById(R.id.category_selection_dp);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
@@ -74,36 +93,38 @@ public class AdvancedSearchFragment extends Fragment {
 
         // handle select date button which opens the
         // material design date picker
-        mPickDateButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // getSupportFragmentManager() to
-                        // interact with the fragments
-                        // associated with the material design
-                        // date picker tag is to get any error
-                        // in logcat
-                        materialDatePicker.show(getParentFragmentManager(), "MATERIAL_DATE_PICKER");
-                    }
+        fromDateTextView.setOnClickListener(
+                v -> {
+                    // getSupportFragmentManager() to
+                    // interact with the fragments
+                    // associated with the material design
+                    // date picker tag is to get any error
+                    // in logcat
+                    materialDatePicker.show(getParentFragmentManager(), "MATERIAL_DATE_PICKER");
+                });
+        toDateTextView.setOnClickListener(
+                v -> {
+                    materialDatePicker.show(getParentFragmentManager(), "MATERIAL_DATE_PICKER");
                 });
 
         // now handle the positive button click from the
         // material design date picker
         materialDatePicker.addOnPositiveButtonClickListener(
-                new MaterialPickerOnPositiveButtonClickListener() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onPositiveButtonClick(Object selection) {
+                (MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>>)
+                        selection -> {
 
-                        // if the user clicks on the positive
-                        // button that is ok button update the
-                        // selected date
-                        mShowSelectedDateText.setVisibility(View.VISIBLE);
-                        mShowSelectedDateText.setText("Selected Date is : " + materialDatePicker.getHeaderText());
-                        // in the above statement, getHeaderText
-                        // will return selected date preview from the
-                        // dialog
-                    }
+                    Long startDate = selection.first;
+                    Long endDate = selection.second;
+                    Date sDate = new Date(startDate);
+                    Date eDate = new Date(endDate);
+                    String startDateString = DateFormat.format("dd/MM/yyyy", sDate).toString();
+                    String endDateString = DateFormat.format("dd/MM/yyyy", eDate).toString();
+                    fromDateTextView.setText(startDateString);
+                    toDateTextView.setText(endDateString);
+
+
+                    //TODO: for firebase
+                    Timestamp startDateUtc =new Timestamp(sDate);
                 });
 
 
