@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.foundyapp.model.ModelFirebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -22,6 +23,7 @@ public class RegisterActivity extends Activity {
     private FirebaseAuth mAuth ;
     private EditText password;
     private EditText email;
+    ModelFirebase db;
     private EditText reenterpass;
     private EditText fullname;
     private Button btn;
@@ -38,6 +40,7 @@ public class RegisterActivity extends Activity {
         setContentView(R.layout.activity_register);
         //firebase instance
         mAuth = FirebaseAuth.getInstance();
+        db=new ModelFirebase();
 
         password=findViewById(R.id.et_password);
         reenterpass=findViewById(R.id.et_repassword);
@@ -54,6 +57,7 @@ public class RegisterActivity extends Activity {
         String str_email = email.getText().toString();
         String str_pass= password.getText().toString();
         String str_repass= reenterpass.getText().toString();
+        progressBar.setVisibility(View.VISIBLE);
 
         if(str_name.isEmpty()) {
             this.fullname.setError("Please enter your full name");
@@ -73,61 +77,22 @@ public class RegisterActivity extends Activity {
         if(str_repass.isEmpty() || str_pass.compareTo(str_repass)!=0) {
             this.reenterpass.setError("Please re type your password");
         }
-        else
-        mAuth.createUserWithEmailAndPassword(str_email, str_pass)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(),
-                                "Registration successful!",
-                                Toast.LENGTH_LONG)
-                                .show();
+        else {
+            db.userRegistration(str_email,str_pass,getApplicationContext());
 
-                        // hide the progress bar
-                        progressBar.setVisibility(View.GONE);
-
-                        // if the user created intent to login activity
-                        Intent intent
-                                = new Intent(RegisterActivity.this,
-                                LoginActivity.class);
-                        startActivity(intent);
-                    }
-                    else{
-                        // Registration failed
-                        Toast.makeText(
-                                getApplicationContext(),
-                                "Registration failed!!"
-                                        + " Please try again later",
-                                Toast.LENGTH_LONG)
-                                .show();
-
-                        // hide the progress bar
-                        progressBar.setVisibility(View.GONE);
-
-                    }
-
-                });
-        
-        
-        
-    }
-
-    public  void checkData(String name, String email, String pass, String pass2) {
-
-        if(name.isEmpty()) {
-            this.fullname.setError("Please enter your full name");
+            progressBar.setVisibility(View.GONE);
         }
 
-       if(email.isEmpty()) {
-           this.email.setError("Please enter email");
-       }
-
-       if(pass.isEmpty()) {
-           this.password.setError("Please enter password");
-       }
-       if(pass2.isEmpty() || pass.compareTo(pass2)!=0) {
-           this.reenterpass.setError("Please re type your password");
-       }
+        
+        
+        
     }
+
+//  public void toLoginActivity(){
+//        Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
+//        startActivity(intent);
+//        finish();
+//  }
 
 
 

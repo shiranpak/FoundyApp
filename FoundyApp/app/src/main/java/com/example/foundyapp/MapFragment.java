@@ -166,14 +166,12 @@ public class MapFragment extends Fragment  {
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
                 @Override
                 public void onPlaceSelected(@NonNull Place place) {
-                    // TODO: Get info about the selected place.
                     Log.i("Tag", "Place: " + place.getName() + ", " + place.getId());
                 }
 
 
                 @Override
                 public void onError(@NonNull Status status) {
-                    // TODO: Handle the error.
                     Log.i("Tag", "An error occurred: " + status);
                 }
             });
