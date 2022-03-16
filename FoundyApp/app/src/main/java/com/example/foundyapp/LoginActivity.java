@@ -8,29 +8,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-
+import com.example.foundyapp.model.ModelFirebase;
 import com.example.foundyapp.model.UserSession;
-import com.example.foundyapp.ui.home.HomeFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+
 
 public class LoginActivity extends Activity {
     private EditText eEmail;
     private EditText ePassword;
     private Button eLogin;
     private ProgressBar progressbar;
-    private FirebaseAuth mAuth;
+    ModelFirebase db;
     UserSession session;
-
-
-
 
     public int checkData (String email, String password)
     {
@@ -52,8 +40,6 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // taking instance of FirebaseAuth
-        mAuth=FirebaseAuth.getInstance();
         session= new UserSession(getApplicationContext());
 
         // initialising all views through id defined above
@@ -62,6 +48,7 @@ public class LoginActivity extends Activity {
         eLogin = findViewById(R.id.btn_login);
        TextView regis = findViewById(R.id.text_register);
        progressbar=findViewById(R.id.progressBar);
+       db=new ModelFirebase();
 
 
        // Set on Click Listener on Sign-in button
@@ -83,61 +70,28 @@ public class LoginActivity extends Activity {
         String email, password;
         email = eEmail.getText().toString();
         password = ePassword.getText().toString();
-
         // validations for input email and password
         if (checkData(email,password)!=0)
         {
-
-            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(),
-                            "Hello!",
-                            Toast.LENGTH_LONG)
-                            .show();
-
-                    // hide the progress bar
-                    progressbar.setVisibility(View.GONE);
-                    session.createUserLoginSession(password,email);
-                    // if sign-in is successful
-                    // intent to home activity
-                    Intent intent
-                            = new Intent(LoginActivity.this,
-                            DrawerActivity
-                                    .class);
-                    startActivity(intent);
-                    finish();
-
-
-                } else {
-                    // sign-in failed
-                    try
-                    {
-                        throw task.getException();
-                    }
-                    // if user enters wrong email.
-                    catch (FirebaseAuthInvalidUserException invalidEmail)
-                    {
-                      eEmail.setError("Email is not exist");
-                    }
-                    // if user enters wrong password.
-                    catch (FirebaseAuthInvalidCredentialsException wrongPassword)
-                    {
-                        ePassword.setError("Wrong password");
-                    }
-                    catch (Exception e)
-                    {
-                        Toast.makeText(getApplicationContext(),
-                                "Failed to login",
-                                Toast.LENGTH_LONG)
-                                .show();
-                    }
-                    // hide the progress bar
-                    progressbar.setVisibility(View.GONE);
-                }
-            });
+            db.loginUser(email,password,getApplicationContext());
+            if(db.checkIfLoggedIn())
+            {
+                session.createUserLoginSession(password, email);
+                Intent intent=new Intent(getApplicationContext(),DrawerActivity.class);
+                startActivity(intent);
+                finish();
             }
-
+            progressbar.setVisibility(View.GONE);
+        }
     }
+
+    public void toFeedActivity(){
+        Intent intent=new Intent(getApplicationContext(),DrawerActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
 
 
 
