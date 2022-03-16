@@ -24,52 +24,12 @@ public class Model {
 
     ModelFirebase modelFirebase = new ModelFirebase();
 
-    public enum ListLoadingState {
-        loading,
-        loaded
+    public interface GetAllDataListener{
+        void onComplete(List<?> list);
     }
-    MutableLiveData<ListLoadingState> categoryListLoadingState = new MutableLiveData<ListLoadingState>();
 
-    MutableLiveData<List<Category>> categoriesList = new MutableLiveData<List<Category>>();
-
-    public LiveData<List<Category>> getAllCategories() {
-
-        // get last local update date
-        Long lastUpdateDate = MyApplication.getContext().getSharedPreferences("TAG", Context.MODE_PRIVATE)
-                .getLong("CategoriesUpdateDate", 0);
-
-        if (categoriesList.getValue() == null) {
-            modelFirebase.getAllCategories(lastUpdateDate, new ModelFirebase.GetAllCategoriesListener() {
-                @Override
-                public void onComplete(List<Category> list) {
-                    // add all records to the local db
-                    executor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            Long lud = new Long(0);
-                            Log.d("TAG", "fb returned " + list.size());
-                            for (Category category : list) {
-                                AppLocalDb.db.categoryDao().insertAll(category);
-                                if (lud < category.getUpdateDate()) {
-                                    lud = category.getUpdateDate();
-                                }
-                            }
-                            // update last local update date
-                            MyApplication.getContext()
-                                    .getSharedPreferences("TAG", Context.MODE_PRIVATE)
-                                    .edit()
-                                    .putLong("StudentsLastUpdateDate", lud)
-                                    .commit();
-
-                            //return all data to caller
-                            List<Category> stList = AppLocalDb.db.categoryDao().GetAllCategories();
-                            categoriesList.postValue(stList);
-                            categoryListLoadingState.postValue(ListLoadingState.loaded);
-                        }
-                    });
-                }
-            });
-        }
-        return categoriesList;
+    public void getAllData(GetAllDataListener listener){
+        modelFirebase.getAllCategories(listener);
+        modelFirebase.getAllCities(listener);
     }
 }

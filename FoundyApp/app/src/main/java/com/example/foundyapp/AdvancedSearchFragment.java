@@ -9,15 +9,20 @@ import androidx.fragment.app.Fragment;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.foundyapp.model.Category;
+import com.example.foundyapp.model.City;
+import com.example.foundyapp.model.Model;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -38,12 +43,10 @@ public class AdvancedSearchFragment extends Fragment {
 
     private TextInputLayout fromDateTextLayout,toDateTextLayout;
     private TextInputEditText fromDateTextView,toDateTextView;
-    private AutoCompleteTextView textView;
-
-    private static final String[] CATEGORIES = new String[] {
-            "Dog", "Cat", "Wallet"
-    };
-
+    private AutoCompleteTextView categoriesTextView,citiesTextView;
+    List<Category> categoriesList;
+    List<City> citiesList;
+    ProgressBar progressBar;
 
     public AdvancedSearchFragment() {
         // Required empty public constructor
@@ -55,10 +58,57 @@ public class AdvancedSearchFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_advanced_search, container, false);
+
+        progressBar = view.findViewById(R.id.adv_progress);
+        progressBar.setVisibility(View.VISIBLE);
+
+        Model.instance.getAllData(list -> {
+            if (!list.isEmpty())
+            {
+                if (list.get(0) instanceof Category) {
+                    //Categories
+                    categoriesList = (List<Category>) list;
+
+                    String[] categoriesListArr = new String[categoriesList.size()];
+                    for (int i = 0; i < categoriesList.size(); i++)
+                        categoriesListArr[i] = categoriesList.get(i).getName();
+
+                    categoriesTextView = (AutoCompleteTextView) view.findViewById(R.id.category_selection_dp);
+
+                    ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<String>(getActivity(),
+                            android.R.layout.simple_dropdown_item_1line, categoriesListArr);
+
+                    categoriesTextView.setAdapter(categoriesAdapter);
+                }
+                else {
+                    //Cities
+                    citiesList = (List<City>) list;
+
+                    String[] citiesListArr = new String[citiesList.size()];
+                    for (int i = 0; i < citiesList.size(); i++)
+                        citiesListArr[i] = citiesList.get(i).getName();
+
+                    citiesTextView = (AutoCompleteTextView) view.findViewById(R.id.city_selection_dp);
+
+                    ArrayAdapter<String> citiesAdapter = new ArrayAdapter<String>(getActivity(),
+                            android.R.layout.simple_dropdown_item_1line, citiesListArr);
+
+                    citiesTextView.setAdapter(citiesAdapter);
+                }
+            }
+            progressBar.setVisibility(View.GONE);
+        });
 
         fromDateTextLayout = view.findViewById(R.id.from_date_tf);
         fromDateTextView = (TextInputEditText) fromDateTextLayout.getEditText();
@@ -68,11 +118,6 @@ public class AdvancedSearchFragment extends Fragment {
         toDateTextView = (TextInputEditText) toDateTextLayout.getEditText();
         toDateTextView.setShowSoftInputOnFocus(false); //disable keyboard
 
-        textView = (AutoCompleteTextView) view.findViewById(R.id.category_selection_dp);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_dropdown_item_1line, CATEGORIES);
-        textView.setAdapter(adapter);
 
         // now create instance of the material date picker
         // builder make sure to add the "dateRangePicker"
@@ -130,4 +175,6 @@ public class AdvancedSearchFragment extends Fragment {
 
         return view;
     }
+
+
 }
