@@ -10,7 +10,7 @@ import com.example.foundyapp.model.Dao.CategoryDao;
 import com.example.foundyapp.model.Dao.CityDao;
 import com.example.foundyapp.model.Dao.PostDao;
 
-@Database(entities = {Category.class,City.class, Post.class}, version = 3)
+@Database(entities = {Category.class,City.class, Post.class}, version = 4)
 @TypeConverters(value = {Converters.class})
 abstract class AppLocalDbRepository extends RoomDatabase {
     public abstract CategoryDao categoryDao();

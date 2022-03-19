@@ -78,7 +78,7 @@ public class ModelFirebase {
     public void addPost(Post post, Model.AddPostListener listener) {
         Map<String, Object> json = post.toJson();
         db.collection(Post.COLLECTION_NAME)
-                .document(post.getPostId())
+                .document(String.valueOf(post.getPostId()))
                 .set(json)
                 .addOnSuccessListener(unused -> listener.onComplete())
                 .addOnFailureListener(e -> listener.onComplete());

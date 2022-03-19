@@ -20,7 +20,7 @@ public class Post {
     final public static String COLLECTION_NAME = "posts";
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    private String postId = "";
+    private int postId;
 
     public String getTitle() {
         return title;
@@ -42,7 +42,7 @@ public class Post {
     private Long updateDate = new Long(0);
 
     public Post(){}
-    public Post(@NonNull String postId, String title,String category, LatLng location, Long date, String description, boolean type, String userId, boolean flag) {
+    public Post(@NonNull int postId, String title,String category, LatLng location, Long date, String description, boolean type, String userId, boolean flag) {
         this.postId = postId;
         this.category = category;
         this.title = title;
@@ -55,11 +55,11 @@ public class Post {
     }
 
     @NonNull
-    public String getPostId() {
+    public int getPostId() {
         return postId;
     }
 
-    public void setPostId(@NonNull String postId) {
+    public void setPostId(@NonNull int postId) {
         this.postId = postId;
     }
 
@@ -153,7 +153,7 @@ public class Post {
     }
 
     public static Post create(Map<String, Object> json) {
-        String id = (String) json.get("id");
+        int id = (int) json.get("id");
         String category = (String) json.get("category");
         String title = (String) json.get("title");
         String description = (String) json.get("description");
