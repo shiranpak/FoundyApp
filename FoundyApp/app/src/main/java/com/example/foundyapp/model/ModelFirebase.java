@@ -1,33 +1,32 @@
 package com.example.foundyapp.model;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.example.foundyapp.DrawerActivity;
-import com.example.foundyapp.LoginActivity;
-import com.google.firebase.Timestamp;
+import androidx.annotation.NonNull;
+
+import com.firebase.ui.auth.data.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class ModelFirebase {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser;
+    User user;
 
     public ModelFirebase(){
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
@@ -70,26 +69,11 @@ public class ModelFirebase {
                 });
     }
 
-    public void getAllLostPosts(Model.GetAllDataListener listener) {
-        db.collection(Post.COLLECTION_NAME)
-                .get()
-                .addOnCompleteListener(task -> {
-                    List<Post> list = new LinkedList<Post>();
-                    if (task.isSuccessful()){
-                        for (QueryDocumentSnapshot doc : task.getResult()){
-                            /*Post post = Post.create(doc.getData());
-                            if (post != null){
-                                list.add(post);
-                            }*/
-                        }
-                    }
-                    listener.onComplete(list);
-                });
-    }
+
+
     /**Authentication**/
 
     public void loginUser(String email, String password, Context context){
-
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(context,
@@ -125,39 +109,54 @@ public class ModelFirebase {
         });
     }
 
-    public void  userRegistration (String email, String password, Context context){
-
-        mAuth.createUserWithEmailAndPassword(email, password)
+    public void  userRegistration (User user, String password, Context context, Model.AddUserListener listener){
+        mAuth.createUserWithEmailAndPassword(user.getEmail(), password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        user.setUserId(mAuth.getUid());
+                        Map<String, Object> json = user.toJson();
+                        db.collection(user.CollectionName)
+                                .document(user.getEmail())
+                                .set(json).addOnSuccessListener(unused -> listener.onComplete())
+                                .addOnFailureListener(e -> listener.onComplete());
                         Toast.makeText(context,
                                 "Registration successful!",
                                 Toast.LENGTH_LONG)
                                 .show();
-                        // if the user created intent to login activity
-                        Intent intent=new Intent(context,LoginActivity.class);
-                        context.startActivity(intent);
-
                     }
                     else{
                         // Registration failed
                         Toast.makeText(
                                 context,
                                 "Registration failed!!"
-                                        + " Please try again later",
+                                        + " Please try again later "+task.getException().getMessage(),
                                 Toast.LENGTH_LONG)
                                 .show();
                     }
                 });
-
     }
 
     public boolean checkIfLoggedIn(){
-        if(mAuth.getCurrentUser()!=null)
-            return  true;
+        if(mAuth.getCurrentUser()!=null) {
+            firebaseUser = mAuth.getCurrentUser();
+            return true;
+        }
         else return false;
     }
 
+
+    public void getUser(Model.GetUserByMail listener){
+        if (checkIfLoggedIn()) {
+            db.collection(user.CollectionName).document(firebaseUser.getEmail()).get().addOnCompleteListener(task -> {
+                User user = null;
+                if (task.isSuccessful() & task.getResult() != null) {
+                    user = user.create(task.getResult().getData());
+                }
+                listener.onComplete(user);
+            });
+        }
+
+    }
 
 
 }

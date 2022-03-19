@@ -27,9 +27,26 @@ public class Model {
     public interface GetAllDataListener{
         void onComplete(List<?> list);
     }
+    public interface AddUserListener{
+        void onComplete();
+    }
+    public interface  GetUserByMail{
+        void onComplete(User user);
+    }
 
     public void getAllData(GetAllDataListener listener){
         modelFirebase.getAllCategories(listener);
         modelFirebase.getAllCities(listener);
+    }
+    public void getCategories(GetAllDataListener listener){
+        modelFirebase.getAllCategories(listener);
+    }
+
+    public void addUser(User user, String pass, Context context,AddUserListener listener) {
+        modelFirebase.userRegistration(user,pass,context,listener);
+
+    }
+    public void getUser (GetUserByMail listener) {
+        modelFirebase.getUser(listener);
     }
 }

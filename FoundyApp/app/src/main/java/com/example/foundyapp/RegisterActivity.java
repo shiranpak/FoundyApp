@@ -13,7 +13,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.ModelFirebase;
+import com.example.foundyapp.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -28,6 +30,7 @@ public class RegisterActivity extends Activity {
     private EditText fullname;
     private Button btn;
     private ProgressBar progressBar;
+    User user;
 
     boolean isEmail(String text) {
 
@@ -78,8 +81,8 @@ public class RegisterActivity extends Activity {
             this.reenterpass.setError("Please re type your password");
         }
         else {
-            db.userRegistration(str_email,str_pass,getApplicationContext());
-
+            user=new User(str_name,str_email,null);
+            Model.instance.addUser(user,str_pass,getApplicationContext(),()->toLoginActivity());
             progressBar.setVisibility(View.GONE);
         }
 
@@ -88,11 +91,11 @@ public class RegisterActivity extends Activity {
         
     }
 
-//  public void toLoginActivity(){
-//        Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
-//        startActivity(intent);
-//        finish();
-//  }
+  public void toLoginActivity(){
+        Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
+        startActivity(intent);
+        finish();
+  }
 
 
 

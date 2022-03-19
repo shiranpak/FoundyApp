@@ -7,10 +7,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.example.foundyapp.model.Model;
+import com.example.foundyapp.model.ModelFirebase;
+import com.example.foundyapp.model.User;
 import com.example.foundyapp.model.UserSession;
 import com.example.foundyapp.ui.home.HomeFragment;
+import com.example.foundyapp.ui.home.HomeFragmentDirections;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -32,23 +38,25 @@ public class DrawerActivity extends AppCompatActivity {
     private ActivityDrawerBinding binding;
     private NavController navController;
     private CurvedBottomNavigationView curvedBottomNavigationView;
+    private FloatingActionButton addPostBtn;
     UserSession session;
-
-    /*FirstFragment firstFragment = new FirstFragment();
-    SecondFragment secondFragment = new SecondFragment();
-    ThirdFragment thirdFragment = new ThirdFragment();*/
+    ModelFirebase db;
     private HomeFragment home;
+    TextView name_drawer,email_drawer;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         session = new UserSession(getApplicationContext());
-
+        db=new ModelFirebase();
         binding = ActivityDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarDrawer.toolbar);
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -62,16 +70,27 @@ public class DrawerActivity extends AppCompatActivity {
         //create login session
         //session.checkLogin();
         //logout from app
-        navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        db.checkIfLoggedIn();
+        navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(item -> {
+            session.logoutUser();
+            //db.signOut();
+            return true;
+        });
+
+        //add users information on drawer
+        View header=navigationView.getHeaderView(0);
+        name_drawer=(TextView) header.findViewById(R.id.nameDrawer);
+        email_drawer=(TextView) header.findViewById(R.id.emailText);
+        Model.instance.getUser(new Model.GetUserByMail() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                session.logoutUser();
-                return true;
+            public void onComplete(User user) {
+                name_drawer.setText(user.getFullName());
+                email_drawer.setText(user.getEmail());
             }
         });
 
+
         curvedBottomNavigationView = (CurvedBottomNavigationView)findViewById(R.id.bottom_navigation);
-//        curvedBottomNavigationView.inflateMenu(R.menu.bottom_navigation_menu);
         curvedBottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.bottom_nav_losts_btn:
@@ -120,9 +139,19 @@ public class DrawerActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_drawer);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    public void onClickAdd(View view) {
+        navController.navigate(HomeFragmentDirections.actionNavHomeToAddPostTypeSelectFragment());
     }
 }

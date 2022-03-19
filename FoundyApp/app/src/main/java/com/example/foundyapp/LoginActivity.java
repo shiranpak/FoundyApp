@@ -25,11 +25,14 @@ public class LoginActivity extends Activity {
         if(email.isEmpty() )
         {
             eEmail.setError("Please enter your email");
+            progressbar.setVisibility(View.GONE);
             return 0;
         }
         if(password.isEmpty() )
         {
             ePassword.setError("Please enter your password");
+            progressbar.setVisibility(View.GONE);
+
             return 0;
         }
         return 1;
@@ -74,12 +77,9 @@ public class LoginActivity extends Activity {
         if (checkData(email,password)!=0)
         {
             db.loginUser(email,password,getApplicationContext());
-            if(db.checkIfLoggedIn())
-            {
-                session.createUserLoginSession(password, email);
-                Intent intent=new Intent(getApplicationContext(),DrawerActivity.class);
-                startActivity(intent);
-                finish();
+            if (db.checkIfLoggedIn()){
+                session.createUserLoginSession(password,email);
+                toFeedActivity();
             }
             progressbar.setVisibility(View.GONE);
         }
