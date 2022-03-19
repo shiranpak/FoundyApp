@@ -6,10 +6,12 @@ import androidx.room.RoomDatabase;
 
 import com.example.foundyapp.MyApplication;
 import com.example.foundyapp.model.Dao.CategoryDao;
+import com.example.foundyapp.model.Dao.PostDao;
 
-@Database(entities = {Category.class,City.class}, version = 2)
+@Database(entities = {Category.class,City.class,Post.class}, version = 2)
 abstract class AppLocalDbRepository extends RoomDatabase {
     public abstract CategoryDao categoryDao();
+    public abstract PostDao postDao();
 }
 
 public class AppLocalDb {

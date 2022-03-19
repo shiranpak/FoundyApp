@@ -70,6 +70,22 @@ public class ModelFirebase {
                 });
     }
 
+    public void getAllLostPosts(Model.GetAllDataListener listener) {
+        db.collection(Post.COLLECTION_NAME)
+                .get()
+                .addOnCompleteListener(task -> {
+                    List<Post> list = new LinkedList<Post>();
+                    if (task.isSuccessful()){
+                        for (QueryDocumentSnapshot doc : task.getResult()){
+                            /*Post post = Post.create(doc.getData());
+                            if (post != null){
+                                list.add(post);
+                            }*/
+                        }
+                    }
+                    listener.onComplete(list);
+                });
+    }
     /**Authentication**/
 
     public void loginUser(String email, String password, Context context){
