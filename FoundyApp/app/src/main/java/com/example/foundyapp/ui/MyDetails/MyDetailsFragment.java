@@ -1,6 +1,6 @@
 package com.example.foundyapp.ui.MyDetails;
 
-import android.media.Image;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.foundyapp.databinding.FragmentMydetailsBinding;
 
 public class MyDetailsFragment extends Fragment {
@@ -26,8 +25,11 @@ public class MyDetailsFragment extends Fragment {
         binding = FragmentMydetailsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final ImageView textView = binding.imageView2;
-        //myDetailsViewModel.getText().observe(getViewLifecycleOwner(), (textView::textView));
+        final TextView fullName = binding.etFullName;
+        final TextView email = binding.etEmail;
+        myDetailsViewModel.getFullName().observe(getViewLifecycleOwner(), (fullName::setText));
+        myDetailsViewModel.getEmail().observe(getViewLifecycleOwner(), (email::setText));
+
         return root;
     }
 
