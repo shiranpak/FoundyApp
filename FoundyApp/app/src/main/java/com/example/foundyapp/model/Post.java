@@ -13,10 +13,12 @@ import com.google.firebase.firestore.FieldValue;
 import java.util.HashMap;
 import java.util.Map;
 
-@Entity
+import android.media.Image;
+
+@Entity(tableName = "posts")
 public class Post {
     final public static String COLLECTION_NAME = "posts";
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @NonNull
     private String postId = "";
 
