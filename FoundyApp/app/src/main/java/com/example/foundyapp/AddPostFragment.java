@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,7 +19,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -27,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
@@ -34,6 +38,7 @@ import android.widget.Switch;
 import com.example.foundyapp.model.Category;
 import com.example.foundyapp.model.City;
 import com.example.foundyapp.model.Model;
+import com.example.foundyapp.model.Post;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -54,6 +59,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 
+import java.io.FileDescriptor;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -74,13 +81,18 @@ public class AddPostFragment extends Fragment {
     ProgressBar progressBar;
     AutoCompleteTextView categoriesTextView;
     TextInputLayout dateTextLayout;
-    TextInputEditText dateTextView;
+    TextInputEditText dateTextView, nameTextView, descriptionTextView;
     private Switch useMyLocation;
     private ImageView itemImage;
     private PlacesClient placesClient;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean locationPermissionGranted;
+    private Button saveBtn;
+    private LatLng selectedLocation;
+    private Long selectedDate;
     private AutocompleteSupportFragment autocompleteFragment;
+    private boolean postType;
+    Bitmap imageBitmap = null;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -122,6 +134,14 @@ public class AddPostFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
         progressBar = view.findViewById(R.id.add_progress);
         progressBar.setVisibility(View.VISIBLE);
+
+        saveBtn = view.findViewById(R.id.add_submitBtn);
+        saveBtn.setOnClickListener(v -> savePost());
+
+        nameTextView = view.findViewById(R.id.add_item_title_tf);
+        descriptionTextView = view.findViewById(R.id.add_desc_text);
+
+        postType = AddPostFragmentArgs.fromBundle(getArguments()).getPostType();
 
         Model.instance.getCategories(list -> {
             if (!list.isEmpty()) {
@@ -176,8 +196,8 @@ public class AddPostFragment extends Fragment {
         materialDatePicker.addOnPositiveButtonClickListener(
                 (MaterialPickerOnPositiveButtonClickListener<Long>)
                         selection -> {
-                            Long startDate = selection;
-                            Date sDate = new Date(startDate);
+                            selectedDate = selection;
+                            Date sDate = new Date(selectedDate);
                             String startDateString = DateFormat.format("dd/MM/yyyy", sDate).toString();
                             dateTextView.setText(startDateString);
 
@@ -207,13 +227,14 @@ public class AddPostFragment extends Fragment {
 
 
         autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS).setCountries("ISR");
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME,Place.Field.ADDRESS));
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME,Place.Field.ADDRESS,Place.Field.LAT_LNG));
 
         // Set up a PlaceSelectionListener to handle the response.
         // its not working rn because we need to add billing details
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
+                selectedLocation = place.getLatLng();
             }
 
             @Override
@@ -247,6 +268,8 @@ public class AddPostFragment extends Fragment {
                     for (PlaceLikelihood placeLikelihood : response.getPlaceLikelihoods()) {
                         autocompleteFragment.setText(
                                 placeLikelihood.getPlace().getAddress());
+
+                        selectedLocation = placeLikelihood.getPlace().getLatLng();
                     }
                     progressBar.setVisibility(View.GONE);
 
@@ -325,14 +348,50 @@ public class AddPostFragment extends Fragment {
         if (requestCode == PICK_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
                 imageUri = data.getData();
+                try {
+                    ParcelFileDescriptor parcelFileDescriptor =
+                            MyApplication.getContext().getContentResolver().openFileDescriptor(imageUri, "r");
+                    FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                    imageBitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+
+                    parcelFileDescriptor.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 itemImage.setImageURI(imageUri);
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
             if (resultCode == Activity.RESULT_OK) {
                 Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                imageBitmap = (Bitmap) extras.get("data");
                 itemImage.setImageBitmap(imageBitmap);
             }
+        }
+    }
+
+    private void savePost() {
+        progressBar.setVisibility(View.VISIBLE);
+        saveBtn.setEnabled(false);
+        itemImage.setEnabled(false);
+
+        String title = nameTextView.getText().toString();
+        String description = descriptionTextView.getText().toString();
+        String category = categoriesTextView.getText().toString();
+        Post post = new Post("todo",title,category,selectedLocation,selectedDate,description,postType,"todo",true);
+        if (imageBitmap == null){
+            Model.instance.addPost(post,()->{
+                //Navigation.findNavController(nameEt).navigateUp();
+            });
+        }
+        else
+        {
+            Model.instance.saveImage(imageBitmap, "todopostid" + ".jpg", url -> {
+                post.setImageUrl(url);
+                Model.instance.addPost(post,()->{
+//                    Navigation.findNavController(nameEt).navigateUp();
+                });
+            });
         }
     }
 }
