@@ -19,10 +19,19 @@ public class Post {
     private String category;
     private String location;
     private String date;
-    private Image image;
+    //private Image image;
 
     @NonNull
     private String description;
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
+    }
+
     private enum type {lost,found}
     private int userId;
     private boolean isDeleted=false;
@@ -55,13 +64,13 @@ public class Post {
         this.date = date;
     }
 
-    public Image getImage() {
+    /*public Image getImage() {
         return image;
     }
 
     public void setImage(Image image) {
         this.image = image;
-    }
+    }*/
 
     public String getDescription() {
         return description;

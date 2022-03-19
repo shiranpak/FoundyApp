@@ -68,7 +68,7 @@ public class DrawerActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         //create login session
-        //session.checkLogin();
+        session.checkLogin();
         //logout from app
         db.checkIfLoggedIn();
         navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(item -> {
@@ -81,13 +81,13 @@ public class DrawerActivity extends AppCompatActivity {
         View header=navigationView.getHeaderView(0);
         name_drawer=(TextView) header.findViewById(R.id.nameDrawer);
         email_drawer=(TextView) header.findViewById(R.id.emailText);
-        Model.instance.getUser(new Model.GetUserByMail() {
+        /*Model.instance.getUser(new Model.GetUserByMail() {
             @Override
             public void onComplete(User user) {
                 name_drawer.setText(user.getFullName());
                 email_drawer.setText(user.getEmail());
             }
-        });
+        });*/
 
 
         curvedBottomNavigationView = (CurvedBottomNavigationView)findViewById(R.id.bottom_navigation);
