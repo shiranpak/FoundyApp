@@ -9,7 +9,11 @@
         android:id="@+id/nav_home"
         android:name="com.example.foundyapp.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_addPostTypeSelectFragment"
+            app:destination="@id/addPostTypeSelectFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_gallery"
@@ -32,4 +36,22 @@
         android:name="com.example.foundyapp.SearchByPlaceFragment"
         android:label="Search by place"
         tools:layout="@layout/fragment_search_by_place" />
+    <fragment
+        android:id="@+id/addPostTypeSelectFragment"
+        android:name="com.example.foundyapp.AddPostTypeSelectFragment"
+        android:label="fragment_add_post_type_select"
+        tools:layout="@layout/fragment_add_post_type_select" >
+        <action
+            android:id="@+id/action_addPostTypeSelectFragment_to_addPostFragment"
+            app:destination="@id/addPostFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addPostFragment"
+        android:name="com.example.foundyapp.AddPostFragment"
+        android:label="fragment_add_post"
+        tools:layout="@layout/fragment_add_post">
+        <argument
+            android:name="postType"
+            app:argType="boolean" />
+    </fragment>
 </navigation>

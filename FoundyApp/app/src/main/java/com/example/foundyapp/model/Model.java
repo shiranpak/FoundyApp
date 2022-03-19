@@ -32,4 +32,7 @@ public class Model {
         modelFirebase.getAllCategories(listener);
         modelFirebase.getAllCities(listener);
     }
+    public void getCategories(GetAllDataListener listener){
+        modelFirebase.getAllCategories(listener);
+    }
 }

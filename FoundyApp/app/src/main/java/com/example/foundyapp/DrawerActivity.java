@@ -10,7 +10,9 @@ import android.widget.ListView;
 
 import com.example.foundyapp.model.UserSession;
 import com.example.foundyapp.ui.home.HomeFragment;
+import com.example.foundyapp.ui.home.HomeFragmentDirections;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -32,6 +34,7 @@ public class DrawerActivity extends AppCompatActivity {
     private ActivityDrawerBinding binding;
     private NavController navController;
     private CurvedBottomNavigationView curvedBottomNavigationView;
+    private FloatingActionButton addPostBtn;
     UserSession session;
 
     /*FirstFragment firstFragment = new FirstFragment();
@@ -71,7 +74,6 @@ public class DrawerActivity extends AppCompatActivity {
         });
 
         curvedBottomNavigationView = (CurvedBottomNavigationView)findViewById(R.id.bottom_navigation);
-//        curvedBottomNavigationView.inflateMenu(R.menu.bottom_navigation_menu);
         curvedBottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.bottom_nav_losts_btn:
@@ -120,9 +122,19 @@ public class DrawerActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_drawer);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    public void onClickAdd(View view) {
+        navController.navigate(HomeFragmentDirections.actionNavHomeToAddPostTypeSelectFragment());
     }
 }
