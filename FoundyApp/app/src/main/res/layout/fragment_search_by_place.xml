@@ -62,11 +62,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/use_my_location_toggle">
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_background"
-        card_view:cardCornerRadius="4dp"
-        card_view:contentPadding="0dp">
+
 
         <fragment
             android:id="@+id/place_autocomplete_fragment"

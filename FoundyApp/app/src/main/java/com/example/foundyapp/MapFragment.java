@@ -158,17 +158,20 @@ public class MapFragment extends Fragment  {
                     getParentFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
 
-            autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS);
-            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+            autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS).setCountries("ISR");
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG));
 
             // Set up a PlaceSelectionListener to handle the response.
             // its not working rn because we need to add billing details
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
                 @Override
                 public void onPlaceSelected(@NonNull Place place) {
-                    Log.i("Tag", "Place: " + place.getName() + ", " + place.getId());
+                    if(map != null)
+                    {
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                (place.getLatLng()), DEFAULT_ZOOM));
+                    }
                 }
-
 
                 @Override
                 public void onError(@NonNull Status status) {
@@ -258,7 +261,8 @@ public class MapFragment extends Fragment  {
 
             // Get the likely places - that is, the businesses and other points of interest that
             // are the best match for the device's current location.
-            @SuppressWarnings("MissingPermission") final Task<FindCurrentPlaceResponse> placeResult =
+            @SuppressWarnings("MissingPermission")
+            final Task<FindCurrentPlaceResponse> placeResult =
                     placesClient.findCurrentPlace(request);
             placeResult.addOnCompleteListener (task -> {
                 if (task.isSuccessful() && task.getResult() != null) {

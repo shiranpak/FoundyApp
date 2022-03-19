@@ -1,13 +1,15 @@
 package com.example.foundyapp.model;
 
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-
+import android.util.Log;
 
 import androidx.core.os.HandlerCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
+import com.example.foundyapp.MyApplication;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -35,6 +37,9 @@ public class Model {
     public void getAllData(GetAllDataListener listener){
         modelFirebase.getAllCategories(listener);
         modelFirebase.getAllCities(listener);
+    }
+    public void getCategories(GetAllDataListener listener){
+        modelFirebase.getAllCategories(listener);
     }
 
     public void addUser(User user, String pass, Context context,AddUserListener listener) {
