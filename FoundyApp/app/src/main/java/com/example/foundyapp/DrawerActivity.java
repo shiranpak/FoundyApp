@@ -60,7 +60,7 @@ public class DrawerActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         //create login session
-        session.checkLogin();
+        //session.checkLogin();
         //logout from app
         navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override

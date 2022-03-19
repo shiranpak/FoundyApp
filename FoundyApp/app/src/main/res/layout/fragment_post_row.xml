@@ -5,14 +5,87 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#DDF1F1"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/radius"
     android:clickable="true"
+    android:focusable="true"
+    android:elevation="10dp"
     tools:context="ui.home.HomeFragment">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout_post_comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/post_description_tv">
+
+        <ImageView
+            android:id="@+id/post_comment_button"
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/comment"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/post_userprofile_imageview"
+        android:layout_width="51dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:baselineAligned="false"
+        android:src="@drawable/fui_ic_anonymous_white_24dp"
+        app:layout_constraintEnd_toStartOf="@+id/constraintLayout_post_username"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_conversion_absoluteHeight="42dp"
+        tools:layout_conversion_absoluteWidth="58dp" />
+
+    <LinearLayout
+        android:id="@+id/constraintLayout_post_username"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="3dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/post_date_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/post_userprofile_imageview"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/post_username_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:text="@string/post_username_textview"
+            tools:layout_conversion_absoluteHeight="19dp"
+            tools:layout_conversion_absoluteWidth="63dp"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="53dp" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/post_imageview"
@@ -21,8 +94,8 @@
 
     <ImageView
         android:id="@+id/post_imageview"
-        android:layout_width="117dp"
-        android:layout_height="108dp"
+        android:layout_width="93dp"
+        android:layout_height="85dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="15dp"
@@ -37,11 +110,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
         android:text="@string/post_description_tv"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/post_location_tv" />
+        app:layout_constraintTop_toBottomOf="@id/post_category_tv" />
 
     <TextView
         android:id="@+id/post_location_tv"
@@ -59,9 +130,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        android:layout_marginEnd="94dp"
         android:text="@string/post_date_tv"
+        app:layout_constraintEnd_toStartOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/post_category_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/post_userprofile_imageview" />
 
     <TextView
         android:id="@+id/post_category_tv"
@@ -71,6 +144,6 @@
         android:layout_marginTop="15dp"
         android:text="@string/post_category_tv"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/post_location_tv" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
