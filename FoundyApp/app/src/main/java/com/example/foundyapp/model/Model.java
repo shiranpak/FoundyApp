@@ -67,6 +67,7 @@ public class Model {
         if (postsList.getValue() == null) {
             refreshPostsList();
         }
+        refreshPostsList();
         return postsList;
     }
 
@@ -113,7 +114,7 @@ public class Model {
     public void addPost(Post post, AddPostListener listener) {
         modelFirebase.addPost(post, () -> {
             listener.onComplete();
-//            refreshPostsList();
+            //refreshPostsList();
         });
 
     }
