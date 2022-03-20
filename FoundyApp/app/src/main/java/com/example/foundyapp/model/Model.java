@@ -1,6 +1,7 @@
 package com.example.foundyapp.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -44,6 +45,22 @@ public class Model {
 
     public void addUser(User user, String pass, Context context,AddUserListener listener) {
         modelFirebase.userRegistration(user,pass,context,listener);
+
+    }
+    public interface AddPostListener {
+        void onComplete();
+    }
+    public interface SaveImageListener {
+        void onComplete(String url);
+    }
+    public void saveImage(Bitmap imageBitmap, String imageName, SaveImageListener listener) {
+        modelFirebase.saveImage(imageBitmap, imageName, listener);
+    }
+    public void addPost(Post post, AddPostListener listener) {
+        modelFirebase.addPost(post, () -> {
+            listener.onComplete();
+//            refreshPostsList();
+        });
 
     }
     public void getUser (GetUserByMail listener) {
