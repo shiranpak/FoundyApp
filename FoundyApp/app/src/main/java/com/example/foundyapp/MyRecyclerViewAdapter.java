@@ -1,15 +1,13 @@
-package com.example.foundyapp.ui.home;
+package com.example.foundyapp;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.foundyapp.R;
 //import com.example.foundyapp.databinding.FragmentItemBinding;
 //import com.example.foundyapp.databinding.FragmentItemBinding;
 
@@ -20,7 +18,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     List<String> data = new ArrayList<>();
 
-    MyRecyclerViewAdapter(){
+    public MyRecyclerViewAdapter(){
         for(int i=0; i<10; i++) {
             data.add("element "+i);
         }
