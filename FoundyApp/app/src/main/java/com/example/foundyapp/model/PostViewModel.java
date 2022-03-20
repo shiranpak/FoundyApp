@@ -1,10 +1,19 @@
 package com.example.foundyapp.model;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.foundyapp.model.Dao.PostDao;
 
+import java.util.List;
+
 public class PostViewModel extends ViewModel {
 
-    private PostDao postDao;
-}
+    LiveData<List<Post>> data;
+
+    public PostViewModel(){
+        data = Model.instance.getAllPosts();
+    }
+    public LiveData<List<Post>> getData() {
+        return data;
+    }}

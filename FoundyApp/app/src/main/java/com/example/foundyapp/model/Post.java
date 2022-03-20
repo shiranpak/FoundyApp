@@ -1,8 +1,6 @@
 package com.example.foundyapp.model;
 
 import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -12,8 +10,6 @@ import com.google.firebase.firestore.FieldValue;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import android.media.Image;
 
 @Entity(tableName = "posts")
 public class Post {
@@ -32,7 +28,7 @@ public class Post {
 
     private String title = "";
     private String category = "";
-    private LatLng location;
+    private LatLng location = null;
     private Long date = new Long(0);;
     private String description = "";
     private boolean type; //true = found, false = lost
@@ -153,24 +149,26 @@ public class Post {
     }
 
     public static Post create(Map<String, Object> json) {
-        int id = (int) json.get("id");
+        int id =  ((Long) json.get("id")).intValue();
         String category = (String) json.get("category");
         String title = (String) json.get("title");
         String description = (String) json.get("description");
         String user = (String) json.get("user");
-        LatLng location = (LatLng) json.get("location");
+        HashMap<String, Double> data = (HashMap<String, Double>) json.get("location");
+        double latitude = data.get("latitude");
+        double longitude = data.get("longitude");
+        LatLng location = new LatLng(latitude,longitude);
         Boolean flag = (Boolean) json.get("flag");
         Boolean type = (Boolean) json.get("type");
         Timestamp ts = (Timestamp)json.get("updateDate");
-        Timestamp dateTs = (Timestamp)json.get("date");
         Long updateDate = ts.getSeconds();
-        Long date = dateTs.getSeconds();
-        String avatarUrl = (String)json.get("imageUrl");
+        Long date = (long)json.get("date");
+        String imageUrl = (String)json.get("imageUrl");
 
-        Post student = new Post(id,title,category,location,date,description,type,user,flag);
-        student.setUpdateDate(updateDate);
-        student.setImageUrl(avatarUrl);
-        return student;
+        Post post = new Post(id,title,category,location,date,description,type,user,flag);
+        post.setUpdateDate(updateDate);
+        post.setImageUrl(imageUrl);
+        return post;
     }
 }
 

@@ -53,6 +53,59 @@ public class Model {
     public interface SaveImageListener {
         void onComplete(String url);
     }
+    public enum ListLoadingState {
+        loading,
+        loaded
+    }
+    public LiveData<ListLoadingState> getPostListLoadingState() {
+        return postListLoadingState;
+    }
+    MutableLiveData<ListLoadingState> postListLoadingState = new MutableLiveData<ListLoadingState>();
+    MutableLiveData<List<Post>> postsList = new MutableLiveData<List<Post>>();
+    public LiveData<List<Post>> getAllPosts() {
+        if (postsList.getValue() == null) {
+            refreshPostsList();
+        }
+        ;
+        return postsList;
+    }
+    public void refreshPostsList(){
+        postListLoadingState.setValue(ListLoadingState.loading);
+
+        // get last local update date
+        Long lastUpdateDate = MyApplication.getContext().getSharedPreferences("TAG", Context.MODE_PRIVATE).getLong("StudentsLastUpdateDate", 0);
+        // firebase get all updates since lastLocalUpdateDate
+        modelFirebase.getAllPosts(lastUpdateDate, new ModelFirebase.GetAllPostsListener() {
+        @Override
+        public void onComplete(List<Post> list) {
+            // add all records to the local db
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    Long lud = new Long(0);
+                    for (Post post : list) {
+                        AppLocalDb.db.postDao().insert(post);
+                        if (lud < post.getUpdateDate()) {
+                            lud = post.getUpdateDate();
+                        }
+                    }
+                    // update last local update date
+                    MyApplication.getContext()
+                            .getSharedPreferences("TAG", Context.MODE_PRIVATE)
+                            .edit()
+                            .putLong("PostsLastUpdateDate", lud)
+                            .commit();
+
+                    //return all data to caller
+                    List<Post> ptList = AppLocalDb.db.postDao().GetAllPosts();
+                    postsList.postValue(ptList);
+                    postListLoadingState.postValue(ListLoadingState.loaded);
+                }
+            });
+        }
+    });
+}
+
     public void saveImage(Bitmap imageBitmap, String imageName, SaveImageListener listener) {
         modelFirebase.saveImage(imageBitmap, imageName, listener);
     }

@@ -201,12 +201,8 @@ public class AddPostFragment extends Fragment {
                             String startDateString = DateFormat.format("dd/MM/yyyy", sDate).toString();
                             dateTextView.setText(startDateString);
 
+                            Timestamp selectedDate = new Timestamp(sDate);
 
-                            //TODO: for firebase
-                            Timestamp startDateUtc = new Timestamp(sDate);
-                            // in the above statement, getHeaderText
-                            // is the selected date preview from the
-                            // dialog
                         });
         Context mContext = getActivity();
 
@@ -378,10 +374,12 @@ public class AddPostFragment extends Fragment {
         String title = nameTextView.getText().toString();
         String description = descriptionTextView.getText().toString();
         String category = categoriesTextView.getText().toString();
+
         Post post = new Post(1,title,category,selectedLocation,selectedDate,description,postType,"todo",true);
-        if (imageBitmap == null){
-            Model.instance.addPost(post,()->{
-                //Navigation.findNavController(nameEt).navigateUp();
+        if (imageBitmap == null) {
+            Model.instance.addPost(post, () -> {
+                new DialogFragment().show(
+                        getChildFragmentManager(), "");
             });
         }
         else
@@ -389,7 +387,8 @@ public class AddPostFragment extends Fragment {
             Model.instance.saveImage(imageBitmap, "todopostid" + ".jpg", url -> {
                 post.setImageUrl(url);
                 Model.instance.addPost(post,()->{
-//                    Navigation.findNavController(nameEt).navigateUp();
+                    new DialogFragment().show(
+                            getChildFragmentManager(), "");
                 });
             });
         }

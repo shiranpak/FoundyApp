@@ -6,6 +6,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,22 +21,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.foundyapp.model.Model;
+import com.example.foundyapp.model.Post;
+import com.example.foundyapp.model.PostViewModel;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -44,12 +54,8 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.GeoPoint;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +72,7 @@ public class MapFragment extends Fragment  {
 
     // The entry point to the Places API.
     private PlacesClient placesClient;
+    PostViewModel postViewModel;
 
     private Switch useMyLocation;
 
@@ -105,12 +112,22 @@ public class MapFragment extends Fragment  {
                     // Inflate the layouts for the info window, title and snippet.
                     View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
                             (FrameLayout) getView().findViewById(R.id.map), false);
-
-                    TextView title = infoWindow.findViewById(R.id.title);
+                             TextView title = infoWindow.findViewById(R.id.title);
                     title.setText(marker.getTitle());
 
                     TextView snippet = infoWindow.findViewById(R.id.snippet);
                     snippet.setText(marker.getSnippet());
+
+                    /*View infoWindow = getLayoutInflater().inflate(R.layout.custom_infowindow, null);
+
+                    TextView title = infoWindow.findViewById(R.id.post_title_iw);
+                    title.setText(marker.getTitle());
+
+                    TextView snippet = infoWindow.findViewById(R.id.post_desc_iw);
+                    snippet.setText(marker.getSnippet());
+
+                    TextView user = infoWindow.findViewById(R.id.post_userInfo_iw);
+                    user.setText(marker.get());*/
 
                     return infoWindow;
                 }
@@ -128,28 +145,6 @@ public class MapFragment extends Fragment  {
                 Places.initialize(mContext, getString(R.string.api_key));
             }
 
-            //FIREBASE REMOVE!!!!!!!****************** JUST FOR CONCEPT PROOF ****************
-            DocumentReference documentReference = db.collection("MapsData").document("FNZiDevuGzV2U82WYnVq");
-            documentReference.addSnapshotListener((value, error) -> {
-                if (value != null && value.exists()) {
-                    // below line is to create a geo point and we are getting
-                    // geo point from firebase and setting to it.
-                    GeoPoint geoPoint = value.getGeoPoint("geoPoint");
-
-                    // getting latitude and longitude from geo point
-                    // and setting it to our location.
-                    LatLng location = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
-
-                    // adding marker to each location on google maps
-                    Marker marker = map.addMarker(new MarkerOptions().position(location).title("Marker"));
-                    marker.showInfoWindow();
-                    // below line is use to move camera.
-                    map.moveCamera(CameraUpdateFactory.newLatLng(location));
-                } else {
-                    Toast.makeText(getActivity(), "Error found is " + error, Toast.LENGTH_SHORT).show();
-                }
-            });
-            //FIREBASE REMOVE!!!!!!!******************
             map.setOnInfoWindowClickListener(marker -> {
 
             });
@@ -183,6 +178,11 @@ public class MapFragment extends Fragment  {
         }
     };
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
+    }
 
     @Nullable
     @Override
@@ -190,7 +190,35 @@ public class MapFragment extends Fragment  {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         db = FirebaseFirestore.getInstance();
+        postViewModel.getData().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+            @Override
+            public void onChanged(List<Post> posts) {
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Post post :posts){
+                    if (post != null && post.getLocation() != null){
+                        LatLng location = post.getLocation();
+                        Marker marker = map.addMarker(new MarkerOptions()
+                                .position(location)
+                                .title(post.getTitle())
+                                .snippet(post.getDescription())
+                                .draggable(false)
+                                .visible(true));
+                        marker.showInfoWindow();
+                        builder.include(marker.getPosition());
+                    }
+                    LatLngBounds bounds = builder.build();
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+                    map.animateCamera(cameraUpdate);
+                }
+            }
+        });
+        Model.instance.getPostListLoadingState().observe(getViewLifecycleOwner(), studentListLoadingState -> {
+            if (studentListLoadingState == Model.ListLoadingState.loading){
+            }else{
+                Log.d("TAG","");
+            }
 
+        });
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 

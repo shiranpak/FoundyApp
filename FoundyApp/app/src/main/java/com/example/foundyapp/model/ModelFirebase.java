@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
@@ -74,7 +75,27 @@ public class ModelFirebase {
                     listener.onComplete(list);
                 });
     }
+    public interface GetAllPostsListener{
+        void onComplete(List<Post> list);
+    }
 
+    public void getAllPosts(Long lastUpdateDate, GetAllPostsListener listener) {
+        db.collection(Post.COLLECTION_NAME)
+                .whereGreaterThanOrEqualTo("updateDate",new Timestamp(lastUpdateDate,0))
+                .get()
+                .addOnCompleteListener(task -> {
+                    List<Post> list = new LinkedList<Post>();
+                    if (task.isSuccessful()){
+                        for (QueryDocumentSnapshot doc : task.getResult()){
+                            Post post = Post.create(doc.getData());
+                            if (post != null){
+                                list.add(post);
+                            }
+                        }
+                    }
+                    listener.onComplete(list);
+                });
+    }
     public void addPost(Post post, Model.AddPostListener listener) {
         Map<String, Object> json = post.toJson();
         db.collection(Post.COLLECTION_NAME)
@@ -89,7 +110,7 @@ public class ModelFirebase {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     public void saveImage(Bitmap imageBitmap, String imageName, Model.SaveImageListener listener) {
         StorageReference storageRef = storage.getReference();
-        StorageReference imgRef = storageRef.child("user_avatars/" + imageName);
+        StorageReference imgRef = storageRef.child("posts_Images/" + imageName);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);

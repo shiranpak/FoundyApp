@@ -8,4 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorAccentapp">#D81B60</color>
+    <color name="md_white_1000">#ffffff</color>
+    <color name="md_light_green_A700">#FF64DD17</color>
 </resources>

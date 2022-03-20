@@ -9,7 +9,7 @@ import java.util.Date;
 public class Converters {
     @TypeConverter
     public String latLngToString(LatLng latLng) {
-        return "(${latLng.latitude},${latLng.longitude}";
+        return String.format("(%s,%s)", latLng.latitude,latLng.longitude);
     }
 
     @TypeConverter
