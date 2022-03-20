@@ -4,16 +4,22 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.foundyapp.model.Model;
+import com.example.foundyapp.model.ModelFirebase;
+import com.example.foundyapp.model.Post;
+
+import java.util.List;
+
 public class GalleryViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    String userId;
+    LiveData<List<Post>> data;
 
-    public GalleryViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+    public GalleryViewModel(){
+        data = Model.instance.getAllPosts();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<List<Post>> getData() {
+        return data;
     }
 }

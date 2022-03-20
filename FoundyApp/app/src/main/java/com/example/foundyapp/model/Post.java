@@ -154,10 +154,13 @@ public class Post {
         String title = (String) json.get("title");
         String description = (String) json.get("description");
         String user = (String) json.get("user");
-        HashMap<String, Double> data = (HashMap<String, Double>) json.get("location");
-        double latitude = data.get("latitude");
-        double longitude = data.get("longitude");
-        LatLng location = new LatLng(latitude,longitude);
+        LatLng location = new LatLng(0,0);
+        if (json.get("location") != null) {
+            HashMap<String, Double> data = (HashMap<String, Double>) json.get("location");
+            double latitude = data.get("latitude");
+            double longitude = data.get("longitude");
+            location = new LatLng(latitude, longitude);
+        }
         Boolean flag = (Boolean) json.get("flag");
         Boolean type = (Boolean) json.get("type");
         Timestamp ts = (Timestamp)json.get("updateDate");

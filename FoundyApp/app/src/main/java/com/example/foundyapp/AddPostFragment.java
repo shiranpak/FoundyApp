@@ -374,7 +374,6 @@ public class AddPostFragment extends Fragment {
         String title = nameTextView.getText().toString();
         String description = descriptionTextView.getText().toString();
         String category = categoriesTextView.getText().toString();
-
         Post post = new Post(1,title,category,selectedLocation,selectedDate,description,postType,"todo",true);
         if (imageBitmap == null) {
             Model.instance.addPost(post, () -> {

@@ -62,18 +62,19 @@ public class Model {
     }
     MutableLiveData<ListLoadingState> postListLoadingState = new MutableLiveData<ListLoadingState>();
     MutableLiveData<List<Post>> postsList = new MutableLiveData<List<Post>>();
+
     public LiveData<List<Post>> getAllPosts() {
         if (postsList.getValue() == null) {
             refreshPostsList();
         }
-        ;
         return postsList;
     }
+
     public void refreshPostsList(){
         postListLoadingState.setValue(ListLoadingState.loading);
 
         // get last local update date
-        Long lastUpdateDate = MyApplication.getContext().getSharedPreferences("TAG", Context.MODE_PRIVATE).getLong("StudentsLastUpdateDate", 0);
+        Long lastUpdateDate = MyApplication.getContext().getSharedPreferences("TAG", Context.MODE_PRIVATE).getLong("PostsLastUpdateDate", 0);
         // firebase get all updates since lastLocalUpdateDate
         modelFirebase.getAllPosts(lastUpdateDate, new ModelFirebase.GetAllPostsListener() {
         @Override
