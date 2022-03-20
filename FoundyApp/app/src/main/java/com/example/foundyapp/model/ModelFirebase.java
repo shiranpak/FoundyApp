@@ -80,8 +80,9 @@ public class ModelFirebase {
     }
 
     public void getAllPosts(Long lastUpdateDate, GetAllPostsListener listener) {
+        Timestamp ts = new Timestamp(lastUpdateDate,0);
         db.collection(Post.COLLECTION_NAME)
-                .whereGreaterThanOrEqualTo("updateDate",new Timestamp(lastUpdateDate,0))
+                .whereGreaterThanOrEqualTo("updateDate",ts)
                 .get()
                 .addOnCompleteListener(task -> {
                     List<Post> list = new LinkedList<Post>();
@@ -99,7 +100,7 @@ public class ModelFirebase {
     public void addPost(Post post, Model.AddPostListener listener) {
         Map<String, Object> json = post.toJson();
         db.collection(Post.COLLECTION_NAME)
-                .document(String.valueOf(post.getPostId()))
+                .document()
                 .set(json)
                 .addOnSuccessListener(unused -> listener.onComplete())
                 .addOnFailureListener(e -> listener.onComplete());

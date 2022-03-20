@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +58,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,7 +99,9 @@ public class MapFragment extends Fragment  {
     private String[] likelyPlaceAddresses;
     private List[] likelyPlaceAttributions;
     private LatLng[] likelyPlaceLatLngs;
+    ProgressBar progressBar;
 
+    private List<Marker> lostMarkers = new ArrayList<>(), foundMarkers=new ArrayList<>();
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -173,7 +177,50 @@ public class MapFragment extends Fragment  {
                     Log.i("Tag", "An error occurred: " + status);
                 }
             });
+            postViewModel.getData().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+                @Override
+                public void onChanged(List<Post> posts) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    for (Post post :posts){
+                        if (post != null && post.getLocation() != null){
 
+                            LatLng location = post.getLocation();
+                            Marker marker = map.addMarker(new MarkerOptions()
+                                    .position(location)
+                                    .title(post.getTitle())
+                                    .snippet(post.getDescription())
+                                    .draggable(false));
+
+                            builder.include(marker.getPosition());
+                            if(post.isType()) {
+                                foundMarkers.add(marker);
+                                marker.setVisible(true);
+                                marker.showInfoWindow();
+                            }
+                            else
+                            {
+                                lostMarkers.add(marker);
+                                marker.setVisible(false);
+                                marker.hideInfoWindow();
+                            }
+                        }
+                        LatLngBounds bounds = builder.build();
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+                        map.animateCamera(cameraUpdate);
+                    }
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
+            Model.instance.getPostListLoadingState().observe(getViewLifecycleOwner(), studentListLoadingState -> {
+                if (studentListLoadingState == Model.ListLoadingState.loading){
+                    progressBar.setVisibility(View.VISIBLE);
+                }else{
+                    progressBar.setVisibility(View.GONE);
+                    Log.d("TAG","");
+                }
+
+            });
             updateLocationUI();
         }
     };
@@ -189,37 +236,11 @@ public class MapFragment extends Fragment  {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_map, container, false);
         db = FirebaseFirestore.getInstance();
-        postViewModel.getData().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
-            @Override
-            public void onChanged(List<Post> posts) {
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (Post post :posts){
-                    if (post != null && post.getLocation() != null){
-                        LatLng location = post.getLocation();
-                        Marker marker = map.addMarker(new MarkerOptions()
-                                .position(location)
-                                .title(post.getTitle())
-                                .snippet(post.getDescription())
-                                .draggable(false)
-                                .visible(true));
-                        marker.showInfoWindow();
-                        builder.include(marker.getPosition());
-                    }
-                    LatLngBounds bounds = builder.build();
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
-                    map.animateCamera(cameraUpdate);
-                }
-            }
-        });
-        Model.instance.getPostListLoadingState().observe(getViewLifecycleOwner(), studentListLoadingState -> {
-            if (studentListLoadingState == Model.ListLoadingState.loading){
-            }else{
-                Log.d("TAG","");
-            }
+        progressBar = view.findViewById(R.id.search_place_progress);
 
-        });
-        return inflater.inflate(R.layout.fragment_map, container, false);
+        return view;
     }
 
     @Override
@@ -451,6 +472,31 @@ public class MapFragment extends Fragment  {
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
+        }
+    }
+    public void ShowLosts(){
+        for (Marker marker:foundMarkers)
+        {
+            marker.setVisible((false));
+            marker.hideInfoWindow();
+        }
+        for (Marker marker:lostMarkers)
+        {
+            marker.setVisible((true));
+            marker.showInfoWindow();
+        }
+    }
+
+    public void ShowFindings(){
+        for (Marker marker:foundMarkers)
+        {
+            marker.setVisible((true));
+            marker.showInfoWindow();
+        }
+        for (Marker marker:lostMarkers)
+        {
+            marker.setVisible((false));
+            marker.hideInfoWindow();
         }
     }
 }

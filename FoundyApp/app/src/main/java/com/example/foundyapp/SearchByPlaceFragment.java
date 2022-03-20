@@ -13,6 +13,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.material.button.MaterialButtonToggleGroup;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link SearchByPlaceFragment#newInstance} factory method to
@@ -26,6 +29,7 @@ public class SearchByPlaceFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+    private MapFragment mapFragment;
 
     public SearchByPlaceFragment() {
         // Required empty public constructor
@@ -47,7 +51,6 @@ public class SearchByPlaceFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,8 +62,22 @@ public class SearchByPlaceFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_search_by_place, container, false);
+
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_search_by_place, container, false);
+        mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.fragmentContainerView);
+
+        MaterialButtonToggleGroup toggleGroup = view.findViewById(R.id.findings_losts_toggle_group);
+        if (toggleGroup != null) {
+            toggleGroup.addOnButtonCheckedListener(
+                    (group, checkedId, isChecked) -> {
+                        if (checkedId == R.id.findings_toggle) {
+                            mapFragment.ShowFindings();
+                        }else if(checkedId == R.id.losts_toggle){
+                            mapFragment.ShowLosts();
+                        }
+                    });
+        }
+        return view;
     }
 }
