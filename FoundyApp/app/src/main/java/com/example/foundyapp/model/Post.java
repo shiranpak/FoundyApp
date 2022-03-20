@@ -38,8 +38,8 @@ public class Post {
     private Long updateDate = new Long(0);
 
     public Post(){}
-    public Post(@NonNull int postId, String title,String category, LatLng location, Long date, String description, boolean type, String userId, boolean flag) {
-        this.postId = postId;
+    public Post(String title,String category, LatLng location, Long date, String description, boolean type, String userId, boolean flag) {
+
         this.category = category;
         this.title = title;
         this.location = location;
@@ -168,7 +168,7 @@ public class Post {
         Long date = (long)json.get("date");
         String imageUrl = (String)json.get("imageUrl");
 
-        Post post = new Post(id,title,category,location,date,description,type,user,flag);
+        Post post = new Post(title,category,location,date,description,type,user,flag);
         post.setUpdateDate(updateDate);
         post.setImageUrl(imageUrl);
         return post;

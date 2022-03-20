@@ -15,5 +15,7 @@ public interface PostDao {
     @Query("select * from posts")
     List<Post> GetAllPosts();
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Post post);
+    void insert(Post... posts);
+    @Query("DELETE FROM posts")
+    void removeAll();
 }

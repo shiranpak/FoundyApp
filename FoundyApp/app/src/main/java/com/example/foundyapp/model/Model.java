@@ -1,6 +1,7 @@
 package com.example.foundyapp.model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,6 +25,10 @@ public class Model {
     public Handler mainThread = HandlerCompat.createAsync(Looper.getMainLooper());
 
     ModelFirebase modelFirebase = new ModelFirebase();
+
+    public void removeAllPosts() {
+        executor.execute(() -> AppLocalDb.db.postDao().removeAll());
+    }
 
     public interface GetAllDataListener{
         void onComplete(List<?> list);
@@ -67,7 +72,6 @@ public class Model {
         if (postsList.getValue() == null) {
             refreshPostsList();
         }
-        refreshPostsList();
         return postsList;
     }
 
@@ -75,7 +79,13 @@ public class Model {
         postListLoadingState.setValue(ListLoadingState.loading);
 
         // get last local update date
-        Long lastUpdateDate = MyApplication.getContext().getSharedPreferences("TAG", Context.MODE_PRIVATE).getLong("PostsLastUpdateDate", 0);
+        final SharedPreferences sp = MyApplication.getContext().getSharedPreferences("TAG", Context.MODE_PRIVATE);
+        long lastUpdateDate = sp.getLong("PostsLastUpdateDate", 0);
+
+        /*executor.execute(() -> {
+            List<Post> ptList = AppLocalDb.db.postDao().GetAllPosts();
+            postsList.postValue(ptList);
+        });*/
         // firebase get all updates since lastLocalUpdateDate
         modelFirebase.getAllPosts(lastUpdateDate, new ModelFirebase.GetAllPostsListener() {
         @Override
@@ -114,7 +124,7 @@ public class Model {
     public void addPost(Post post, AddPostListener listener) {
         modelFirebase.addPost(post, () -> {
             listener.onComplete();
-            //refreshPostsList();
+//            refreshPostsList();
         });
 
     }
