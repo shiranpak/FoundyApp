@@ -13,17 +13,17 @@
     <string name="api_key">AIzaSyBRNh4ht4hq9vjS5fuezo-5l8jEKx82ARo</string>
 
     <!--login and registers strings-->
-    <string name="swipe_left_for_register">Swipe Left for Register</string>
+    <string name="hintEdit">Enter your password for changing your details</string>
     <string name="login">Login</string>
     <string name="My_profile">My Profile</string>
     <string name="logout">Logout</string>
     <string name="editPic">Edit picture</string>
     <string name="editName">Edit name</string>
+    <string name="editProf">Edit User</string>
     <string name="changePass">Change password</string>
     <string name="password">Password</string>
     <string name="e_mail">Email</string>
     <string name="tag">Let\'s join </string>
-    <string name="swipe_right_for_login">Swipe Right for Login</string>
     <string name="register">Register</string>
     <string name="re_type_password">Re-type Password</string>
     <string name="your_name">Full Name</string>

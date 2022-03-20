@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -22,103 +23,82 @@
 
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tv_heading"
-        >
+        app:layout_constraintTop_toBottomOf="@id/tv_heading">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusable="true"
-            android:focusableInTouchMode="true"
-            >
+            android:focusableInTouchMode="true">
 
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_image"
                 android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.7"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="20dp"
                 android:textColorHint="#808080"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                >
+                app:layout_constraintWidth_percent="0.7">
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="165dp"
-                    />
+                    android:layout_height="165dp" />
 
-                <TextView
-                    android:id="@+id/et_profilePic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#0000FF"
-                    android:text="@string/editPic" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_first_name"
-                app:helperText="Full Name"
                 android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.7"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="14dp"
                 android:textColorHint="#808080"
+                app:helperText="Full Name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_image"
-                >
+                app:layout_constraintWidth_percent="0.7">
 
                 <TextView
                     android:id="@+id/et_full_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#00000000"
                     android:gravity="center"
                     android:padding="10dp"
                     android:textColor="#000000"
                     android:textColorHint="#808080"
-                    android:background="#00000000"
-                    android:textSize="15sp"
-                    />
+                    android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/textView6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#0000FF"
-                    android:text="@string/editName" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_email"
                 android:layout_width="0dp"
-                app:helperText="Email"
-                app:layout_constraintWidth_percent="0.7"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:textColorHint="#808080"
+                app:helperText="Email"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_first_name"
-                >
+                app:layout_constraintWidth_percent="0.7">
 
                 <TextView
                     android:id="@+id/et_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#00000000"
                     android:gravity="center"
                     android:padding="10dp"
                     android:textColor="#000000"
                     android:textColorHint="#808080"
-                    android:background="#00000000"
-                    android:textSize="15sp"
-                    />
+                    android:textSize="15sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -126,14 +106,13 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_pass"
                 android:layout_width="0dp"
-                app:helperText="Password"
-                app:layout_constraintWidth_percent="0.7"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:textColorHint="#808080"
+                app:helperText="Password"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_email"
-                >
+                app:layout_constraintWidth_percent="0.7">
 
                 <TextView
                     android:id="@+id/et_ProfPass"
@@ -147,19 +126,24 @@
                     android:textColorHint="#808080"
                     android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/et_ProfPassEdit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#0000FF"
-                    android:text="@string/changePass" />
-
             </com.google.android.material.textfield.TextInputLayout>
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    <Button
+        android:id="@+id/btn_edit"
+        android:layout_width="106dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="29dp"
+        android:text="Edit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
+        app:layout_constraintVertical_bias="0.223"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

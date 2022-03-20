@@ -174,7 +174,7 @@ public class ModelFirebase {
                         user.setUserId(mAuth.getUid());
                         Map<String, Object> json = user.toJson();
                         db.collection(user.CollectionName)
-                                .document(user.getEmail())
+                                .document(user.userId)
                                 .set(json).addOnSuccessListener(unused -> listener.onComplete())
                                 .addOnFailureListener(e -> listener.onComplete());
                         Toast.makeText(context,
@@ -205,7 +205,7 @@ public class ModelFirebase {
 
     public void getUser(Model.GetUserByMail listener){
         if (checkIfLoggedIn()) {
-            db.collection(user.CollectionName).document(firebaseUser.getEmail()).get().addOnCompleteListener(task -> {
+            db.collection(user.CollectionName).document(firebaseUser.getUid()).get().addOnCompleteListener(task -> {
                 User user = null;
                 if (task.isSuccessful() & task.getResult() != null) {
                     user = user.create(task.getResult().getData());
