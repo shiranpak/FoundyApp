@@ -67,6 +67,7 @@ public class DrawerActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+
         //create login session
         session.checkLogin();
         //logout from app

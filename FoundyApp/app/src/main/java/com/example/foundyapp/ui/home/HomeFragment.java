@@ -1,21 +1,18 @@
 package com.example.foundyapp.ui.home;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.ExpandedMenuView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.foundyapp.MyRecyclerViewAdapter;
 import com.example.foundyapp.R;
 import com.example.foundyapp.databinding.FragmentHomeBinding;
 
