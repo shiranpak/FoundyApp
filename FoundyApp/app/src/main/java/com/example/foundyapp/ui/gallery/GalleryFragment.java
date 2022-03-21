@@ -23,6 +23,8 @@ import com.example.foundyapp.model.Post;
 import com.example.foundyapp.ui.home.HomeViewModel;
 import com.firebase.ui.auth.data.model.User;
 
+import java.util.List;
+
 public class GalleryFragment extends Fragment {
 
     private FragmentGalleryBinding binding;
@@ -49,7 +51,8 @@ public class GalleryFragment extends Fragment {
         swipeRefresh = view.findViewById(R.id.myposts_swiperefresh);
         swipeRefresh.setOnRefreshListener(() -> Model.instance.refreshPostsList());
 
-        adapter = new MyRecyclerViewAdapter();
+        adapter = new MyRecyclerViewAdapter(galleryViewModel.getData().getValue());
+        adapter.notifyDataSetChanged();
         rv.setLayoutManager(new LinearLayoutManager(this.getContext()));
         rv.setAdapter(adapter);
 
@@ -79,9 +82,11 @@ public class GalleryFragment extends Fragment {
 
     private class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
+        private Context context;
+        private List<Post> myPostslist;
 
-        public MyRecyclerViewAdapter() {
-
+        public MyRecyclerViewAdapter(List<Post> list) {
+            this.myPostslist = list;
         }
 
         @NonNull
@@ -126,7 +131,7 @@ public class GalleryFragment extends Fragment {
 
         }
 
-        void bind(Post post){
+        public void bind(Post post){
             date.setText(post.getDate().toString());
             //location.setText(post.getLocation());
             category.setText(post.getCategory());
