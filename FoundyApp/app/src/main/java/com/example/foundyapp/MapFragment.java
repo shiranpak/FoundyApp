@@ -106,84 +106,84 @@ public class MapFragment extends Fragment  {
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
 
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
-            map = googleMap;
-            map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                @Nullable
-                @Override
-                public View getInfoContents(@NonNull Marker marker) {
-                    // Inflate the layouts for the info window, title and snippet.
-                    View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
-                            (FrameLayout) getView().findViewById(R.id.map), false);
-                             TextView title = infoWindow.findViewById(R.id.title);
-                    title.setText(marker.getTitle());
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Nullable
+            @Override
+            public View getInfoContents(@NonNull Marker marker) {
+                // Inflate the layouts for the info window, title and snippet.
+                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
+                        (FrameLayout) getView().findViewById(R.id.map), false);
+                TextView title = infoWindow.findViewById(R.id.title);
+                title.setText(marker.getTitle());
 
-                    TextView snippet = infoWindow.findViewById(R.id.snippet);
-                    snippet.setText(marker.getSnippet());
+                TextView snippet = infoWindow.findViewById(R.id.snippet);
+                snippet.setText(marker.getSnippet());
 
-                    /*View infoWindow = getLayoutInflater().inflate(R.layout.custom_infowindow, null);
+                /*View infoWindow = getLayoutInflater().inflate(R.layout.custom_infowindow, null);
 
-                    TextView title = infoWindow.findViewById(R.id.post_title_iw);
-                    title.setText(marker.getTitle());
+                TextView title = infoWindow.findViewById(R.id.post_title_iw);
+                title.setText(marker.getTitle());
 
-                    TextView snippet = infoWindow.findViewById(R.id.post_desc_iw);
-                    snippet.setText(marker.getSnippet());
+                TextView snippet = infoWindow.findViewById(R.id.post_desc_iw);
+                snippet.setText(marker.getSnippet());
 
-                    TextView user = infoWindow.findViewById(R.id.post_userInfo_iw);
-                    user.setText(marker.get());*/
+                TextView user = infoWindow.findViewById(R.id.post_userInfo_iw);
+                user.setText(marker.get());*/
 
-                    return infoWindow;
-                }
-
-                @Nullable
-                @Override
-                public View getInfoWindow(@NonNull Marker marker) {
-                    return null;
-                }
-            });
-
-            Context mContext = getActivity();
-
-            if (!Places.isInitialized()) {
-                Places.initialize(mContext, getString(R.string.api_key));
+                return infoWindow;
             }
 
-            map.setOnInfoWindowClickListener(marker -> {
+            @Nullable
+            @Override
+            public View getInfoWindow(@NonNull Marker marker) {
+                return null;
+            }
+        });
 
-            });
-            placesClient = Places.createClient(getActivity());
-            autocompleteFragment = (AutocompleteSupportFragment)
-                    getParentFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        Context mContext = getActivity();
+
+        if (!Places.isInitialized()) {
+            Places.initialize(mContext, getString(R.string.api_key));
+        }
+
+        map.setOnInfoWindowClickListener(marker -> {
+
+        });
+        placesClient = Places.createClient(getActivity());
+        autocompleteFragment = (AutocompleteSupportFragment)
+                getParentFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
 
-            autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS).setCountries("ISR");
-            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG));
+        autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS).setCountries("ISR");
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
-            // Set up a PlaceSelectionListener to handle the response.
-            // its not working rn because we need to add billing details
-            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                @Override
-                public void onPlaceSelected(@NonNull Place place) {
-                    if(map != null)
-                    {
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                (place.getLatLng()), DEFAULT_ZOOM));
-                    }
+        // Set up a PlaceSelectionListener to handle the response.
+        // its not working rn because we need to add billing details
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                if (map != null) {
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                            (place.getLatLng()), DEFAULT_ZOOM));
                 }
+            }
 
-                @Override
-                public void onError(@NonNull Status status) {
-                    Log.i("Tag", "An error occurred: " + status);
-                }
-            });
-            postViewModel.getData().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
-                @Override
-                public void onChanged(List<Post> posts) {
-                    progressBar.setVisibility(View.VISIBLE);
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.i("Tag", "An error occurred: " + status);
+            }
+        });
+        postViewModel.getData().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+            @Override
+            public void onChanged(List<Post> posts) {
+                progressBar.setVisibility(View.VISIBLE);
+                if (posts != null && posts.size() > 0) {
                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    for (Post post :posts){
-                        if (post != null && post.getLocation() != null){
+                    for (Post post : posts) {
+                        if (post != null && post.getLocation() != null) {
 
                             LatLng location = post.getLocation();
                             Marker marker = map.addMarker(new MarkerOptions()
@@ -192,36 +192,34 @@ public class MapFragment extends Fragment  {
                                     .snippet(post.getDescription())
                                     .draggable(false));
 
-                            builder.include(marker.getPosition());
-                            if(post.isType()) {
+                            if (post.isType()) {
                                 foundMarkers.add(marker);
                                 marker.setVisible(true);
                                 marker.showInfoWindow();
-                            }
-                            else
-                            {
+                                builder.include(marker.getPosition());
+                            } else {
                                 lostMarkers.add(marker);
                                 marker.setVisible(false);
                                 marker.hideInfoWindow();
                             }
                         }
-                        LatLngBounds bounds = builder.build();
-                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
-                        map.animateCamera(cameraUpdate);
                     }
-                    progressBar.setVisibility(View.GONE);
+                    LatLngBounds bounds = builder.build();
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+                    map.animateCamera(cameraUpdate);
                 }
-            });
-            Model.instance.getPostListLoadingState().observe(getViewLifecycleOwner(), studentListLoadingState -> {
-                if (studentListLoadingState == Model.ListLoadingState.loading){
-                    progressBar.setVisibility(View.VISIBLE);
-                }else{
-                    progressBar.setVisibility(View.GONE);
-                    Log.d("TAG","");
-                }
-
-            });
-            updateLocationUI();
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+        Model.instance.getPostListLoadingState().observe(getViewLifecycleOwner(), studentListLoadingState -> {
+            if (studentListLoadingState == Model.ListLoadingState.loading) {
+                progressBar.setVisibility(View.VISIBLE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                Log.d("TAG", "");
+            }
+        });
+        updateLocationUI();
         }
     };
 
@@ -475,6 +473,7 @@ public class MapFragment extends Fragment  {
         }
     }
     public void ShowLosts(){
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for (Marker marker:foundMarkers)
         {
             marker.setVisible((false));
@@ -484,10 +483,15 @@ public class MapFragment extends Fragment  {
         {
             marker.setVisible((true));
             marker.showInfoWindow();
+            builder.include(marker.getPosition());
         }
+        LatLngBounds bounds = builder.build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+        map.animateCamera(cameraUpdate);
     }
 
     public void ShowFindings(){
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for (Marker marker:foundMarkers)
         {
             marker.setVisible((true));
@@ -498,5 +502,8 @@ public class MapFragment extends Fragment  {
             marker.setVisible((false));
             marker.hideInfoWindow();
         }
+        LatLngBounds bounds = builder.build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+        map.animateCamera(cameraUpdate);
     }
 }

@@ -53,6 +53,8 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -61,10 +63,12 @@ import com.google.firebase.Timestamp;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -166,7 +170,10 @@ public class AddPostFragment extends Fragment {
         dateTextView = (TextInputEditText) dateTextLayout.getEditText();
         dateTextView.setShowSoftInputOnFocus(false);
 
-        MaterialDatePicker.Builder materialDateBuilder = MaterialDatePicker.Builder.datePicker();
+        CalendarConstraints.Builder calendarCons = new CalendarConstraints.Builder()
+                .setValidator(DateValidatorPointBackward.now());
+        MaterialDatePicker.Builder materialDateBuilder = MaterialDatePicker.
+                Builder.datePicker().setCalendarConstraints(calendarCons.build());
 
         // now define the properties of the
         // materialDateBuilder that is title text as SELECT A DATE
@@ -370,12 +377,17 @@ public class AddPostFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         saveBtn.setEnabled(false);
         itemImage.setEnabled(false);
+        Post post = new Post();
 
-        String title = nameTextView.getText().toString();
-        String description = descriptionTextView.getText().toString();
-        String category = categoriesTextView.getText().toString();
+        post.setTitle(nameTextView.getText().toString());
+        post.setDescription(descriptionTextView.getText().toString());
+        post.setCategory(categoriesTextView.getText().toString());
+        post.setLocation(selectedLocation);
+        post.setDate(selectedDate);
+        post.setType(postType);
+        post.setIsDeleted(false);
+        post.setUserId("todo");
 
-        Post post = new Post(title,category,selectedLocation,selectedDate,description,postType,"todo",true);
         if (imageBitmap == null) {
             Model.instance.addPost(post, () -> {
                 new DialogFragment().show(
@@ -384,7 +396,8 @@ public class AddPostFragment extends Fragment {
         }
         else
         {
-            Model.instance.saveImage(imageBitmap, "todopostid" + ".jpg", url -> {
+            String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+            Model.instance.saveImage(imageBitmap, post.getTitle() + currentTime + ".jpg", url -> {
                 post.setImageUrl(url);
                 Model.instance.addPost(post,()->{
                     new DialogFragment().show(

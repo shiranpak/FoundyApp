@@ -1,10 +1,16 @@
 package com.example.foundyapp;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -13,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -23,6 +30,17 @@ import android.widget.Toast;
 import com.example.foundyapp.model.Category;
 import com.example.foundyapp.model.City;
 import com.example.foundyapp.model.Model;
+import com.example.foundyapp.model.Post;
+import com.example.foundyapp.model.PostViewModel;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -30,6 +48,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,7 +56,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
+import java.util.stream.Stream;
 
 public class AdvancedSearchFragment extends Fragment {
 
@@ -47,9 +68,19 @@ public class AdvancedSearchFragment extends Fragment {
     List<Category> categoriesList;
     List<City> citiesList;
     ProgressBar progressBar;
-
+    Button searchBtn;
+    boolean currentType = true; //true = findings
+    private City selectedCity = null;
+    private Category selectedCategory = null;
+    PostViewModel postViewModel;
     public AdvancedSearchFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
     }
 
     @Override
@@ -72,7 +103,19 @@ public class AdvancedSearchFragment extends Fragment {
 
         progressBar = view.findViewById(R.id.adv_progress);
         progressBar.setVisibility(View.VISIBLE);
-
+        searchBtn = view.findViewById(R.id.adv_search_btn);
+        searchBtn.setOnClickListener(v -> searchForPosts());
+        MaterialButtonToggleGroup toggleGroup = view.findViewById(R.id.adv_findings_losts_toggle_group);
+        if (toggleGroup != null) {
+            toggleGroup.addOnButtonCheckedListener(
+                    (group, checkedId, isChecked) -> {
+                        if (checkedId == R.id.adv_findings_toggle) {
+                            currentType = true;
+                        }else if(checkedId == R.id.adv_losts_toggle){
+                            currentType = false;
+                        }
+                    });
+        }
         Model.instance.getAllData(list -> {
             if (!list.isEmpty())
             {
@@ -90,6 +133,12 @@ public class AdvancedSearchFragment extends Fragment {
                             android.R.layout.simple_dropdown_item_1line, categoriesListArr);
 
                     categoriesTextView.setAdapter(categoriesAdapter);
+                    categoriesTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view1, int position, long id) {
+                            selectedCategory = categoriesList.get(position);
+                        }
+                    });
                 }
                 else {
                     //Cities
@@ -105,11 +154,31 @@ public class AdvancedSearchFragment extends Fragment {
                             android.R.layout.simple_dropdown_item_1line, citiesListArr);
 
                     citiesTextView.setAdapter(citiesAdapter);
+                    citiesTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            selectedCity = citiesList.get(position);
+                        }
+                    });
                 }
             }
             progressBar.setVisibility(View.GONE);
         });
-
+        postViewModel.getData().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+            @Override
+            public void onChanged(List<Post> posts) {
+            /*    progressBar.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            */}
+        });
+        Model.instance.getPostListLoadingState().observe(getViewLifecycleOwner(), studentListLoadingState -> {
+            if (studentListLoadingState == Model.ListLoadingState.loading) {
+                progressBar.setVisibility(View.VISIBLE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                Log.d("TAG", "");
+            }
+        });
         fromDateTextLayout = view.findViewById(R.id.from_date_tf);
         fromDateTextView = (TextInputEditText) fromDateTextLayout.getEditText();
         fromDateTextView.setShowSoftInputOnFocus(false); //disable keyboard
@@ -126,7 +195,11 @@ public class AdvancedSearchFragment extends Fragment {
         // date picker we need to pass the pair of Long
         // Long, because the start date and end date is
         // store as "Long" type value
-        MaterialDatePicker.Builder<Pair<Long, Long>> materialDateBuilder = MaterialDatePicker.Builder.dateRangePicker();
+        CalendarConstraints.Builder calendarCons = new CalendarConstraints.Builder()
+                .setValidator(DateValidatorPointBackward.now());
+        MaterialDatePicker.Builder<Pair<Long, Long>> materialDateBuilder =
+                MaterialDatePicker.Builder.dateRangePicker()
+                        .setCalendarConstraints(calendarCons.build());
 
         // now define the properties of the
         // materialDateBuilder
@@ -175,6 +248,32 @@ public class AdvancedSearchFragment extends Fragment {
 
         return view;
     }
+    public void searchForPosts(){
+        if(postViewModel.getData().getValue() == null || postViewModel.getData().getValue().size() == 0)
+        {
+            Toast.makeText(MyApplication.context, "There is no posts found", Toast.LENGTH_LONG).show();
+            return;
+        }
+        else {
+            List<Post> allPosts = postViewModel.getData().getValue();
+            allPosts.stream().filter(post -> post.isType() == currentType);
+            if (selectedCity != null) {
+                Geocoder gcd = new Geocoder(MyApplication.context, Locale.getDefault());
+                double lat = selectedCity.getLocation().latitude;
+                double lng = selectedCity.getLocation().longitude;
+                List<Address> addresses = null;
+                try {
+                    addresses = gcd.getFromLocation(lat, lng, 1);
 
+                    if (addresses.size() > 0) {
+                        Log.d("TAG", addresses.get(0).getLocality().toString());
+                    } else {
 
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
