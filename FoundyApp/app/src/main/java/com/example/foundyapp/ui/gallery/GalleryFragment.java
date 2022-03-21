@@ -125,10 +125,10 @@ public class GalleryFragment extends Fragment {
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            date = itemView.findViewById(R.id.post_date_tv);
-            location = itemView.findViewById(R.id.post_location_tv);
-            category = itemView.findViewById(R.id.post_category_tv);
-            description = itemView.findViewById(R.id.post_description_tv);
+            date = itemView.findViewById(R.id.post_date_input_tv);
+            location = itemView.findViewById(R.id.post_location_input_tv);
+            category = itemView.findViewById(R.id.post_category_input_tv);
+            description = itemView.findViewById(R.id.post_description_input_tv);
             userName = itemView.findViewById(R.id.post_username_textview);
 
         }
