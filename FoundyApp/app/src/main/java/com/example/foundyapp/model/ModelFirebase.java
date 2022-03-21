@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -96,26 +97,28 @@ public class ModelFirebase {
     }
 
     public void getAllPosts(Long lastUpdateDate, GetAllPostsListener listener) {
+
         db.collection(Post.COLLECTION_NAME)
-                .whereGreaterThanOrEqualTo("updateDate",new Timestamp(lastUpdateDate,0))
+           //     .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(lastUpdateDate, 0))
                 .get()
                 .addOnCompleteListener(task -> {
-                    List<Post> list = new LinkedList<Post>();
-                    if (task.isSuccessful()){
-                        for (QueryDocumentSnapshot doc : task.getResult()){
-                            Post post = Post.create(doc.getData());
-                            if (post != null){
+                    List<Post> list = new LinkedList<>();
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            Post post = Post.create(doc.getId(), doc.getData());
+                            if (post != null) {
                                 list.add(post);
                             }
                         }
                     }
                     listener.onComplete(list);
-                });
+                }).addOnFailureListener(e -> listener.onComplete(null));
     }
+
     public void addPost(Post post, Model.AddPostListener listener) {
         Map<String, Object> json = post.toJson();
         db.collection(Post.COLLECTION_NAME)
-                .document(String.valueOf(post.getPostId()))
+                .document()
                 .set(json)
                 .addOnSuccessListener(unused -> listener.onComplete())
                 .addOnFailureListener(e -> listener.onComplete());

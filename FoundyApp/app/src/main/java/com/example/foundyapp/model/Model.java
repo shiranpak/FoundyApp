@@ -1,6 +1,7 @@
 package com.example.foundyapp.model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,6 +13,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.foundyapp.MyApplication;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -24,6 +26,10 @@ public class Model {
     public Handler mainThread = HandlerCompat.createAsync(Looper.getMainLooper());
 
     ModelFirebase modelFirebase = new ModelFirebase();
+
+    public void removeAllPosts() {
+        executor.execute(() -> AppLocalDb.db.postDao().removeAll());
+    }
 
     public interface GetAllDataListener{
         void onComplete(List<?> list);
@@ -66,6 +72,7 @@ public class Model {
     }
     MutableLiveData<ListLoadingState> postListLoadingState = new MutableLiveData<ListLoadingState>();
     MutableLiveData<List<Post>> postsList = new MutableLiveData<List<Post>>();
+
     public LiveData<List<Post>> getAllPosts() {
         if (postsList.getValue() == null) {
             refreshPostsList();
@@ -73,38 +80,33 @@ public class Model {
         ;
         return postsList;
     }
-    public void refreshPostsList(){
+    public void refreshPostsList() {
         postListLoadingState.setValue(ListLoadingState.loading);
 
         // get last local update date
-        Long lastUpdateDate = MyApplication.getContext().getSharedPreferences("TAG", Context.MODE_PRIVATE).getLong("StudentsLastUpdateDate", 0);
-        // firebase get all updates since lastLocalUpdateDate
-        modelFirebase.getAllPosts(lastUpdateDate, new ModelFirebase.GetAllPostsListener() {
-        @Override
-        public void onComplete(List<Post> list) {
-            // add all records to the local db
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    Long lud = new Long(0);
-                    for (Post post : list) {
-                        AppLocalDb.db.postDao().insert(post);
-                        if (lud < post.getUpdateDate()) {
-                            lud = post.getUpdateDate();
-                        }
-                    }
-                    // update last local update date
-                    MyApplication.getContext()
-                            .getSharedPreferences("TAG", Context.MODE_PRIVATE)
-                            .edit()
-                            .putLong("PostsLastUpdateDate", lud)
-                            .commit();
+        Long localLastUpdate = Post.getLocalLastUpdated();
 
-                    //return all data to caller
-                    List<Post> ptList = AppLocalDb.db.postDao().GetAllPosts();
-                    postsList.postValue(ptList);
-                    postListLoadingState.postValue(ListLoadingState.loaded);
+        // firebase get all updates since lastLocalUpdateDate
+        modelFirebase.getAllPosts(localLastUpdate, list -> {
+            // add all records to the local db
+            executor.execute(() -> {
+                Long lud = 0L;
+                for (Post post : list) {
+                    AppLocalDb.db.postDao().insert(post);
+                    // if the post deleted in the firebase, delete him from the local db
+                    if (post.getIsDeleted())
+                        AppLocalDb.db.postDao().delete(post);
+                    if (post.getLastUpdated() > lud) {
+                        lud = post.getLastUpdated();
+                    }
                 }
+                // update last local update date
+                Post.setLocalLastUpdated(lud);
+
+                //return all data to caller
+                List<Post> ptList = AppLocalDb.db.postDao().GetAllPosts();
+                postsList.postValue(ptList);
+                postListLoadingState.postValue(ListLoadingState.loaded);
             });
         }
     });
@@ -118,7 +120,7 @@ public class Model {
     public void addPost(Post post, AddPostListener listener) {
         modelFirebase.addPost(post, () -> {
             listener.onComplete();
-//            refreshPostsList();
+            refreshPostsList();
         });
 
     }

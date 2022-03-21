@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.foundyapp.model.Model;
 import com.example.foundyapp.ui.home.HomeFragmentDirections;
 
 /**
@@ -67,6 +68,8 @@ public class AddPostTypeSelectFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_post_type_select, container, false);
         AddFoundBtn = view.findViewById(R.id.add_found_btn);
         AddLostBtn = view.findViewById(R.id.add_lost_btn);
+        /*Model.instance.removeAllPosts();
+        MyApplication.getContext().deleteSharedPreferences("TAG");*/
 
         AddFoundBtn.setOnClickListener(v -> Navigation.findNavController(v).navigate(AddPostTypeSelectFragmentDirections.actionAddPostTypeSelectFragmentToAddPostFragment(true)));
         AddLostBtn.setOnClickListener(v -> Navigation.findNavController(v).navigate(AddPostTypeSelectFragmentDirections.actionAddPostTypeSelectFragmentToAddPostFragment(false)));

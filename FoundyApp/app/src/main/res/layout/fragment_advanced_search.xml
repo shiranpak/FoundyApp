@@ -7,7 +7,7 @@
     tools:context=".AdvancedSearchFragment">
 
     <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/findings_losts_toggle_group"
+        android:id="@+id/adv_findings_losts_toggle_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -57,7 +57,7 @@
         android:hint="Select Category"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/findings_losts_toggle_group">
+        app:layout_constraintTop_toBottomOf="@+id/adv_findings_losts_toggle_group">
 
         <AutoCompleteTextView
             android:id="@+id/category_selection_dp"
@@ -164,7 +164,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/textButton"
+        android:id="@+id/adv_search_btn"
         style="@style/Widget.MaterialComponents.Button.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
