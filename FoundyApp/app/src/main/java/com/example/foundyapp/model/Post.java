@@ -16,7 +16,7 @@ public class Post {
     final public static String COLLECTION_NAME = "posts";
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    private int postId;
+    private int postId=0;
 
     public String getTitle() {
         return title;

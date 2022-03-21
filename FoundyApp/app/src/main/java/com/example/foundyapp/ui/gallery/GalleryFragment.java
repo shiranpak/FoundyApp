@@ -31,6 +31,7 @@ public class GalleryFragment extends Fragment {
     SwipeRefreshLayout swipeRefresh;
     MyRecyclerViewAdapter adapter;
     GalleryViewModel galleryViewModel;
+    List<Post> myPosts;
 
     public GalleryFragment() {
     }
@@ -51,7 +52,8 @@ public class GalleryFragment extends Fragment {
         swipeRefresh = view.findViewById(R.id.myposts_swiperefresh);
         swipeRefresh.setOnRefreshListener(() -> Model.instance.refreshPostsList());
 
-        adapter = new MyRecyclerViewAdapter(galleryViewModel.getData().getValue());
+        myPosts = galleryViewModel.getData().getValue();
+        adapter = new MyRecyclerViewAdapter(myPosts);
         adapter.notifyDataSetChanged();
         rv.setLayoutManager(new LinearLayoutManager(this.getContext()));
         rv.setAdapter(adapter);
