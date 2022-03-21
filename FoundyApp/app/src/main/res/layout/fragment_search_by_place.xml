@@ -13,14 +13,14 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
-        app:checkedButton="@id/findings_toggle"
+        app:checkedButton="@id/adv_findings_toggle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:singleSelection="true">
 
         <Button
-            android:id="@+id/findings_toggle"
+            android:id="@+id/adv_findings_toggle"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
             android:text="Findings" />
 
         <Button
-            android:id="@+id/losts_toggle"
+            android:id="@+id/adv_losts_toggle"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
         app:layout_constraintTop_toBottomOf="@+id/card_autoComplete" />
 
     <Button
-        android:id="@+id/textButton"
+        android:id="@+id/adv_search_btn"
         style="@style/Widget.MaterialComponents.Button.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

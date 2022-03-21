@@ -69,7 +69,7 @@ public class DrawerActivity extends AppCompatActivity {
 
 
         //create login session
-        //session.checkLogin();
+        session.checkLogin();
         //logout from app
         db.checkIfLoggedIn();
         navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(item -> {
