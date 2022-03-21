@@ -1,28 +1,19 @@
 package com.example.foundyapp;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.ModelFirebase;
-import com.example.foundyapp.model.User;
 import com.example.foundyapp.model.UserSession;
 import com.example.foundyapp.ui.home.HomeFragment;
 import com.example.foundyapp.ui.home.HomeFragmentDirections;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationBarView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -60,7 +51,7 @@ public class DrawerActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_gallery, R.id.MyDetailsFragment)
                 .setOpenableLayout(drawer)
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_drawer);
@@ -70,11 +61,11 @@ public class DrawerActivity extends AppCompatActivity {
 
         //create login session
         session.checkLogin();
-        //logout from app
+        //logout from app TOdo:create listener that checks if user looged in
         db.checkIfLoggedIn();
         navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(item -> {
             session.logoutUser();
-            //db.signOut();
+
             return true;
         });
 

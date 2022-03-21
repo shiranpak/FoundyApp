@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
@@ -75,6 +76,21 @@ public class ModelFirebase {
                     listener.onComplete(list);
                 });
     }
+
+    public void editUser(User user, Model.EditUserListener listener)
+    {
+        if (checkIfLoggedIn() ){
+            DocumentReference u=db.collection(User.CollectionName).document(firebaseUser.getUid());
+            if(user.getImage()!=null) {
+                u.update("name", user.getFullName(), "image", user.getImage());
+            }
+            else{
+                u.update("name", user.getFullName());
+            }
+        }
+
+    }
+
     public interface GetAllPostsListener{
         void onComplete(List<Post> list);
     }
@@ -111,6 +127,28 @@ public class ModelFirebase {
     public void saveImage(Bitmap imageBitmap, String imageName, Model.SaveImageListener listener) {
         StorageReference storageRef = storage.getReference();
         StorageReference imgRef = storageRef.child("posts_Images/" + imageName);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = imgRef.putBytes(data);
+        uploadTask.addOnFailureListener(exception -> listener.onComplete(null))
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        imgRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            Uri downloadUrl = uri;
+                            listener.onComplete(downloadUrl.toString());
+                        });
+                    }
+                });
+    }
+
+
+    public void saveUserImage(Bitmap imageBitmap, String imageName, Model.SaveImageListener listener) {
+        StorageReference storageRef = storage.getReference();
+        StorageReference imgRef = storageRef.child("user_avatars/" + imageName);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -203,7 +241,7 @@ public class ModelFirebase {
     }
 
 
-    public void getUser(Model.GetUserByMail listener){
+    public void getUser(Model.GetUserById listener){
         if (checkIfLoggedIn()) {
             db.collection(user.CollectionName).document(firebaseUser.getUid()).get().addOnCompleteListener(task -> {
                 User user = null;

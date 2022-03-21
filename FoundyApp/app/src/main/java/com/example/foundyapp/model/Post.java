@@ -2,6 +2,7 @@ package com.example.foundyapp.model;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -29,7 +30,7 @@ public class Post {
     private String title = "";
     private String category = "";
     private LatLng location = null;
-    private Long date = new Long(0);;
+    private Long date = new Long(0);
     private String description = "";
     private boolean type; //true = found, false = lost
     private String userId = "";
@@ -38,6 +39,7 @@ public class Post {
     private Long updateDate = new Long(0);
 
     public Post(){}
+
     public Post(@NonNull int postId, String title,String category, LatLng location, Long date, String description, boolean type, String userId, boolean flag) {
         this.postId = postId;
         this.category = category;

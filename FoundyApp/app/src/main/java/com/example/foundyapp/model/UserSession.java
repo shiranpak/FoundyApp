@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import com.example.foundyapp.LoginActivity;
+import com.example.foundyapp.ui.login.LoginActivity;
 
 public class UserSession {
 

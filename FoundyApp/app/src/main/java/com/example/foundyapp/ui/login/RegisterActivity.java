@@ -1,4 +1,4 @@
-package com.example.foundyapp;
+package com.example.foundyapp.ui.login;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,16 +9,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
+import com.example.foundyapp.R;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.ModelFirebase;
 import com.example.foundyapp.model.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends Activity {
@@ -82,7 +77,7 @@ public class RegisterActivity extends Activity {
         }
         else {
             user=new User(str_name,str_email,null);
-            Model.instance.addUser(user,str_pass,getApplicationContext(),()->toLoginActivity());
+            Model.instance.addUser(user,str_pass,getApplicationContext(), this::toLoginActivity);
             progressBar.setVisibility(View.GONE);
         }
 
