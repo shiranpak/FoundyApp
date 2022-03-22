@@ -204,9 +204,11 @@ public class MapFragment extends Fragment  {
                             }
                         }
                     }
-                    LatLngBounds bounds = builder.build();
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
-                    map.animateCamera(cameraUpdate);
+                    if(foundMarkers.size() > 0) {
+                        LatLngBounds bounds = builder.build();
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+                        map.animateCamera(cameraUpdate);
+                    }
                 }
                 progressBar.setVisibility(View.GONE);
             }
@@ -473,37 +475,42 @@ public class MapFragment extends Fragment  {
         }
     }
     public void ShowLosts(){
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for (Marker marker:foundMarkers)
         {
             marker.setVisible((false));
             marker.hideInfoWindow();
         }
-        for (Marker marker:lostMarkers)
-        {
-            marker.setVisible((true));
-            marker.showInfoWindow();
-            builder.include(marker.getPosition());
-        }
-        LatLngBounds bounds = builder.build();
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
-        map.animateCamera(cameraUpdate);
+        if (lostMarkers != null && lostMarkers.size() > 0) {
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Marker marker : lostMarkers) {
+                marker.setVisible((true));
+                marker.showInfoWindow();
+                builder.include(marker.getPosition());
+            }
+            LatLngBounds bounds = builder.build();
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+            map.animateCamera(cameraUpdate);
+        }else
+            Toast.makeText(MyApplication.context, "No Lost posts", Toast.LENGTH_SHORT).show();
     }
 
-    public void ShowFindings(){
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (Marker marker:foundMarkers)
-        {
-            marker.setVisible((true));
-            marker.showInfoWindow();
-        }
-        for (Marker marker:lostMarkers)
-        {
+    public void ShowFindings() {
+        for (Marker marker : lostMarkers) {
             marker.setVisible((false));
             marker.hideInfoWindow();
         }
-        LatLngBounds bounds = builder.build();
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
-        map.animateCamera(cameraUpdate);
+        if (foundMarkers != null && foundMarkers.size() > 0) {
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Marker marker : foundMarkers) {
+                marker.setVisible((true));
+                marker.showInfoWindow();
+                builder.include(marker.getPosition());
+            }
+            LatLngBounds bounds = builder.build();
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+            map.animateCamera(cameraUpdate);
+        }
+        else
+            Toast.makeText(MyApplication.context, "No Finding posts", Toast.LENGTH_SHORT).show();
     }
 }
