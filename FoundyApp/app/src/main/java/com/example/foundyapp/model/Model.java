@@ -3,20 +3,28 @@ package com.example.foundyapp.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.os.HandlerCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.foundyapp.MyApplication;
+import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class Model {
 
@@ -86,8 +94,53 @@ public class Model {
         if (postsList.getValue() == null) {
             refreshPostsList();
         }
-        ;
         return postsList;
+    }
+    public interface searchForPostsListener{
+        void onComplete(List<Post> posts);
+    }
+    public void searchForPosts(String sCity, String sCategory, boolean sType, long sStartDate, long sEndDate , searchForPostsListener listener)
+    {
+        if (postsList.getValue() == null || postsList.getValue().size() == 0) {
+            MyApplication.mainHandler.post(()->{
+                listener.onComplete(null);
+            });
+            return;
+        }else {
+            MyApplication.executorService.execute(() -> {
+                List<Post> filteredPosts = postsList.getValue().stream().
+                        filter(post -> post.isType() == sType
+                                && ((post.getLocation() != null) && (post.getLocation().longitude != 0) && getCityOfPost(post.getLocation()).equals(sCity))
+                                && post.getCategory().equals(sCategory)
+                                && (post.getDate() >= sStartDate && post.getDate() <= sEndDate)).collect(Collectors.toList());
+
+                MyApplication.mainHandler.post(() -> {
+                    listener.onComplete(filteredPosts);
+                });
+            });
+
+        }
+    }
+    Geocoder gcd = new Geocoder(MyApplication.getContext(), Locale.getDefault());
+    public String getCityOfPost(LatLng location){
+        if(location != null){
+            double lat = location.latitude;
+            double lng = location.longitude;
+            List<Address> addresses = null;
+            try {
+                addresses = gcd.getFromLocation(lat, lng, 1);
+
+                if (addresses.size() > 0) {
+                    return addresses.get(0).getLocality();
+                }
+                else {
+                    return null;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return  null;
     }
     public void refreshPostsList() {
         postListLoadingState.setValue(ListLoadingState.loading);
