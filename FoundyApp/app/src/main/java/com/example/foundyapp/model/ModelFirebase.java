@@ -37,6 +37,7 @@ public class ModelFirebase {
     FirebaseUser firebaseUser;
     User user;
 
+
     public ModelFirebase(){
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(false)
@@ -241,6 +242,10 @@ public class ModelFirebase {
             return true;
         }
         else return false;
+    }
+
+    public void SignOut(Model.signOutUserListener listener){
+        mAuth.signOut();
     }
 
 

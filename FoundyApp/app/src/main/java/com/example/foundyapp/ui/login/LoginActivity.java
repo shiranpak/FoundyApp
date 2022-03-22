@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.foundyapp.DrawerActivity;
 import com.example.foundyapp.R;
+import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.ModelFirebase;
 import com.example.foundyapp.model.UserSession;
 
@@ -20,7 +21,6 @@ public class LoginActivity extends Activity {
     private EditText ePassword;
     private Button eLogin;
     private ProgressBar progressbar;
-    ModelFirebase db;
     UserSession session;
 
     public int checkData (String email, String password)
@@ -54,7 +54,6 @@ public class LoginActivity extends Activity {
         eLogin = findViewById(R.id.btn_login);
        TextView regis = findViewById(R.id.text_register);
        progressbar=findViewById(R.id.progressBar);
-       db=new ModelFirebase();
 
 
        // Set on Click Listener on Sign-in button
@@ -79,13 +78,14 @@ public class LoginActivity extends Activity {
         // validations for input email and password
         if (checkData(email,password)!=0)
         {
-            db.loginUser(email,password,getApplicationContext());
-            if (db.checkIfLoggedIn()){
+            Model.instance.login(email,password,getApplicationContext());
+            if(Model.instance.logincCheck()) {
                 session.createUserLoginSession(password,email);
                 toFeedActivity();
             }
-            progressbar.setVisibility(View.GONE);
         }
+
+        progressbar.setVisibility(View.GONE);
     }
 
     public void toFeedActivity(){
