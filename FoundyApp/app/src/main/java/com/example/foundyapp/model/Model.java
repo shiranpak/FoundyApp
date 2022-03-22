@@ -37,7 +37,7 @@ public class Model {
     public interface AddUserListener{
         void onComplete();
     }
-    public interface  GetUserByMail{
+    public interface  GetUserById{
         void onComplete(User user);
     }
 
@@ -53,6 +53,10 @@ public class Model {
         modelFirebase.userRegistration(user,pass,context,listener);
 
     }
+    public interface  EditUserListener{
+        void onComplete();
+    }
+
     public interface AddPostListener {
         void onComplete();
     }
@@ -73,6 +77,7 @@ public class Model {
         if (postsList.getValue() == null) {
             refreshPostsList();
         }
+        ;
         return postsList;
     }
     public void refreshPostsList() {
@@ -103,9 +108,12 @@ public class Model {
                 postsList.postValue(ptList);
                 postListLoadingState.postValue(ListLoadingState.loaded);
             });
-        });
+        }
+    });
+}
+    public void saveUserImage(Bitmap imageBitmap, String imageName, SaveImageListener listener) {
+        modelFirebase.saveUserImage(imageBitmap, imageName, listener);
     }
-
     public void saveImage(Bitmap imageBitmap, String imageName, SaveImageListener listener) {
         modelFirebase.saveImage(imageBitmap, imageName, listener);
     }
@@ -116,7 +124,9 @@ public class Model {
         });
 
     }
-    public void getUser (GetUserByMail listener) {
+    public void getUser (GetUserById listener) {
         modelFirebase.getUser(listener);
     }
+    public void editUser( User user,EditUserListener listener){ modelFirebase.editUser( user,listener); }
+
 }

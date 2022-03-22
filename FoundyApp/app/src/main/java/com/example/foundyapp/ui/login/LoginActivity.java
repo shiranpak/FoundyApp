@@ -1,4 +1,4 @@
-package com.example.foundyapp;
+package com.example.foundyapp.ui.login;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.example.foundyapp.DrawerActivity;
+import com.example.foundyapp.R;
 import com.example.foundyapp.model.ModelFirebase;
 import com.example.foundyapp.model.UserSession;
 
@@ -86,7 +89,7 @@ public class LoginActivity extends Activity {
     }
 
     public void toFeedActivity(){
-        Intent intent=new Intent(getApplicationContext(),DrawerActivity.class);
+        Intent intent=new Intent(getApplicationContext(), DrawerActivity.class);
         startActivity(intent);
         finish();
     }

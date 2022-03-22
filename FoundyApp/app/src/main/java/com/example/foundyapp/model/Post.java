@@ -51,6 +51,7 @@ public class Post {
         this.isDeleted = isDeleted;
         this.lastUpdated = lastUpdated;
     }
+
     @NonNull
     public String getPostId() {
         return postId;
@@ -123,6 +124,14 @@ public class Post {
         this.userId = userId;
     }
 
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
+
 
     public String getImageUrl() {
         return imageUrl;
@@ -143,6 +152,7 @@ public class Post {
 
     public Map<String, Object> toJson() {
         Map<String, Object> json = new HashMap<String, Object>();
+        json.put("id",postId);
         json.put("category",category);
         json.put("title",title);
         json.put("description",description);
@@ -162,8 +172,8 @@ public class Post {
         String title = (String) json.get("title");
         String description = (String) json.get("description");
         String user = (String) json.get("user");
+        LatLng location = new LatLng(0,0);
         HashMap<String, Double> data = (HashMap<String, Double>) json.get("location");
-        LatLng location = null;
         if(data != null) {
             double latitude = data.get("latitude");
             double longitude = data.get("longitude");
@@ -171,6 +181,8 @@ public class Post {
         }
         Boolean isDeleted = (Boolean) json.get("isDeleted");
         Boolean type = (Boolean) json.get("type");
+        Timestamp ts = (Timestamp)json.get("updateDate");
+        Long updateDate = ts.getSeconds();
         Long date = (long)json.get("date");
         String imageUrl = (String)json.get("imageUrl");
         Timestamp ts = (Timestamp)json.get(LAST_UPDATED);

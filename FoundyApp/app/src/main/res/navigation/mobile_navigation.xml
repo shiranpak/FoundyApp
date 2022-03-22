@@ -22,10 +22,14 @@
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
+        android:id="@+id/MyDetailsFragment"
         android:name="com.example.foundyapp.ui.MyDetails.MyDetailsFragment"
         android:label="@string/menu_details"
-        tools:layout="@layout/fragment_mydetails" />
+        tools:layout="@layout/fragment_mydetails" >
+        <action
+            android:id="@+id/action_MyDetailsFragment_to_edit_user_Fragment"
+            app:destination="@id/edit_user_Fragment" />
+    </fragment>
     <fragment
         android:id="@+id/advancedSearchFragment"
         android:name="com.example.foundyapp.AdvancedSearchFragment"
@@ -53,5 +57,13 @@
         <argument
             android:name="postType"
             app:argType="boolean" />
+    </fragment>
+    <fragment
+        android:id="@+id/edit_user_Fragment"
+        android:name="com.example.foundyapp.ui.MyDetails.Edit_user_Fragment"
+        android:label="Edit_user_Fragment" >
+        <action
+            android:id="@+id/action_edit_user_Fragment_to_MyDetailsFragment"
+            app:destination="@id/MyDetailsFragment" />
     </fragment>
 </navigation>

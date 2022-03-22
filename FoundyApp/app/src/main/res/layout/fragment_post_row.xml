@@ -6,12 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="10dp"
-    android:layout_marginEnd="10dp"
     android:layout_marginTop="10dp"
+    android:layout_marginEnd="10dp"
     android:background="@drawable/radius"
     android:clickable="true"
-    android:focusable="true"
     android:elevation="10dp"
+    android:focusable="true"
     tools:context="ui.home.HomeFragment">
 
 
@@ -31,8 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:visibility="invisible"
             android:src="@android:drawable/ic_menu_edit"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -81,17 +81,6 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/post_imageview"
-        app:layout_constraintStart_toEndOf="@+id/post_location_tv"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/post_imageview"
         android:layout_width="93dp"
@@ -115,14 +104,34 @@
         app:layout_constraintTop_toBottomOf="@id/post_category_tv" />
 
     <TextView
+        android:id="@+id/post_description_input_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/post_description_tv"
+        app:layout_constraintTop_toTopOf="@+id/post_description_tv" />
+
+    <TextView
         android:id="@+id/post_location_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:text="@string/post_location_tv"
+        app:layout_constraintBottom_toTopOf="@+id/post_category_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/post_date_tv" />
+
+    <TextView
+        android:id="@+id/post_location_input_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/post_location_tv"
+        app:layout_constraintTop_toTopOf="@+id/post_location_tv" />
 
     <TextView
         android:id="@+id/post_date_tv"
@@ -130,11 +139,18 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
-        android:layout_marginEnd="94dp"
         android:text="@string/post_date_tv"
-        app:layout_constraintEnd_toStartOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/post_userprofile_imageview" />
+
+    <TextView
+        android:id="@+id/post_date_input_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/post_date_tv"
+        app:layout_constraintTop_toTopOf="@+id/post_date_tv" />
 
     <TextView
         android:id="@+id/post_category_tv"
@@ -145,5 +161,14 @@
         android:text="@string/post_category_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/post_location_tv" />
+
+    <TextView
+        android:id="@+id/post_category_input_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/post_category_tv"
+        app:layout_constraintTop_toTopOf="@+id/post_category_tv" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
