@@ -69,7 +69,6 @@ public class UserSession {
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             // Staring Login Activity
             _context.startActivity(i);
-
             return true;
         }
         return false;

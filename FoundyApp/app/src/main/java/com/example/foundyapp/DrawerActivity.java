@@ -1,15 +1,18 @@
 package com.example.foundyapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.TextView;
 
+import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.ModelFirebase;
 import com.example.foundyapp.model.UserSession;
 import com.example.foundyapp.ui.home.HomeFragment;
 import com.example.foundyapp.ui.home.HomeFragmentDirections;
+import com.example.foundyapp.ui.login.LoginActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -41,7 +44,7 @@ public class DrawerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         session = new UserSession(getApplicationContext());
-        db=new ModelFirebase();
+        db = new ModelFirebase();
         binding = ActivityDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarDrawer.toolbar);
@@ -60,12 +63,15 @@ public class DrawerActivity extends AppCompatActivity {
 
 
         //create login session
-        session.checkLogin();
-        //logout from app TOdo:create listener that checks if user looged in
-        db.checkIfLoggedIn();
-        navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(item -> {
-            session.logoutUser();
+        if (session.checkLogin())
+        {
+            finish();
+        }
 
+        navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(item -> {
+            Model.instance.signOutFirebase(()->{});
+            session.logoutUser();
+            finish();
             return true;
         });
 
@@ -73,13 +79,13 @@ public class DrawerActivity extends AppCompatActivity {
         View header=navigationView.getHeaderView(0);
         name_drawer=(TextView) header.findViewById(R.id.nameDrawer);
         email_drawer=(TextView) header.findViewById(R.id.emailText);
-        /*Model.instance.getUser(new Model.GetUserByMail() {
-            @Override
-            public void onComplete(User user) {
-                name_drawer.setText(user.getFullName());
-                email_drawer.setText(user.getEmail());
-            }
-        });*/
+//        Model.instance.getUser(new Model.GetUserById() {
+//            @Override
+//            public void onComplete(User user) {
+//                name_drawer.setText(user.getFullName());
+//                email_drawer.setText(user.getEmail());
+//            }
+//        });
 
 
         curvedBottomNavigationView = (CurvedBottomNavigationView)findViewById(R.id.bottom_navigation);

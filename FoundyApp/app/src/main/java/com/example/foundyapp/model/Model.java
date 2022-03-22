@@ -31,6 +31,10 @@ public class Model {
         executor.execute(() -> AppLocalDb.db.postDao().removeAll());
     }
 
+    public void login(String email, String password, Context applicationContext) {
+        modelFirebase.loginUser(email,password,applicationContext);
+    }
+
     public interface GetAllDataListener{
         void onComplete(List<?> list);
     }
@@ -39,6 +43,12 @@ public class Model {
     }
     public interface  GetUserById{
         void onComplete(User user);
+    }
+    public interface signOutUserListener{
+        void onComplete();
+    }
+    public interface logInUserListener{
+        void onComplete();
     }
 
     public void getAllData(GetAllDataListener listener){
@@ -56,7 +66,6 @@ public class Model {
     public interface  EditUserListener{
         void onComplete();
     }
-
     public interface AddPostListener {
         void onComplete();
     }
@@ -129,5 +138,6 @@ public class Model {
         modelFirebase.getUser(listener);
     }
     public void editUser( User user,EditUserListener listener){ modelFirebase.editUser( user,listener); }
-
+    public void signOutFirebase (signOutUserListener listener) { modelFirebase.SignOut(listener); }
+    public boolean logincCheck(){return modelFirebase.checkIfLoggedIn();}
 }
