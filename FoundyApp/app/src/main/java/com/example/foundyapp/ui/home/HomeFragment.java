@@ -1,14 +1,17 @@
 package com.example.foundyapp.ui.home;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,6 +33,18 @@ public class HomeFragment extends Fragment {
     HomeViewModel homeViewModel;
     List<Post> allPostList;
     MyRecyclerViewAdapter adapter;
+    public boolean type = false;
+
+    public boolean isType() {
+        return type;
+    }
+
+    public void setType(boolean type) {
+        if(this.type == type)
+            return;
+        this.type = type;
+        refreshPostList();
+    }
 
     public HomeFragment() {
     }
@@ -101,9 +116,21 @@ public class HomeFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             Post post = homeViewModel.getData().getValue().get(position);
-            holder.bind(post);
-        }
+            if (post.isType() == type) {
+                holder.bind(post);
 
+                holder.itemView.setVisibility(View.VISIBLE);
+                holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams)
+                holder.itemView.getLayoutParams();
+                layoutParams.setMargins(30, 20, 30, 10);
+                holder.itemView.setLayoutParams(layoutParams);
+            }
+            else {
+                holder.itemView.setVisibility(View.GONE);
+                holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+            }
+        }
 
         @Override
         public int getItemCount() {
@@ -146,9 +173,6 @@ public class HomeFragment extends Fragment {
                         .load(post.getImageUrl())
                         .into(postImage);
             }
-
         }
     }
-
-
 }
