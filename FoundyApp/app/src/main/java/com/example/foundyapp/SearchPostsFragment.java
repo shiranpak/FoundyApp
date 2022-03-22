@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
-import com.example.foundyapp.ui.gallery.GalleryFragment;
+import com.example.foundyapp.ui.myposts.GalleryFragment;
 
 import java.util.List;
 
