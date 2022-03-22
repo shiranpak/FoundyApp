@@ -124,15 +124,6 @@ public class Post {
         this.userId = userId;
     }
 
-    public boolean isFlag() {
-        return flag;
-    }
-
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
-
-
     public String getImageUrl() {
         return imageUrl;
     }
@@ -181,8 +172,6 @@ public class Post {
         }
         Boolean isDeleted = (Boolean) json.get("isDeleted");
         Boolean type = (Boolean) json.get("type");
-        Timestamp ts = (Timestamp)json.get("updateDate");
-        Long updateDate = ts.getSeconds();
         Long date = (long)json.get("date");
         String imageUrl = (String)json.get("imageUrl");
         Timestamp ts = (Timestamp)json.get(LAST_UPDATED);

@@ -108,9 +108,9 @@ public class Model {
                 postsList.postValue(ptList);
                 postListLoadingState.postValue(ListLoadingState.loaded);
             });
-        }
-    });
-}
+        });
+    }
+
     public void saveUserImage(Bitmap imageBitmap, String imageName, SaveImageListener listener) {
         modelFirebase.saveUserImage(imageBitmap, imageName, listener);
     }
