@@ -37,7 +37,7 @@ public class MyDetailsFragment extends Fragment {
         myDetailsViewModel.getFullName().observe(getViewLifecycleOwner(), (fullName::setText));
         myDetailsViewModel.getEmail().observe(getViewLifecycleOwner(), (email::setText));
         Picasso.get().load(myDetailsViewModel.getImage().getValue()).error(R.drawable.icon_user).into(avatar);
-        edit_btn = root.findViewById(R.id.edit_btn);
+        edit_btn = binding.editBtn;
         edit_btn.setOnClickListener((v)-> Navigation.findNavController(v).navigate(MyDetailsFragmentDirections.actionMyDetailsFragmentToEditUserFragment()));
 
         return root;
