@@ -1,4 +1,4 @@
-package com.example.foundyapp.ui.gallery;
+package com.example.foundyapp.ui.myposts;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,12 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,8 +20,7 @@ import com.example.foundyapp.R;
 import com.example.foundyapp.databinding.FragmentGalleryBinding;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
-import com.example.foundyapp.ui.home.HomeViewModel;
-import com.firebase.ui.auth.data.model.User;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -125,6 +122,9 @@ public class GalleryFragment extends Fragment {
         TextView description;
         TextView userName;
         ImageButton edit;
+        ImageButton delete;
+        ImageView postPicture;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -134,6 +134,8 @@ public class GalleryFragment extends Fragment {
             description = itemView.findViewById(R.id.post_description_input_tv);
             userName = itemView.findViewById(R.id.post_username_textview);
             edit =  itemView.findViewById(R.id.post_edit);
+            delete =  itemView.findViewById(R.id.post_delete);
+            postPicture=itemView.findViewById(R.id.post_imageview);
         }
 
         public void bind(Post post){
@@ -144,12 +146,13 @@ public class GalleryFragment extends Fragment {
             userName.setText(post.getUserId());
             edit.setVisibility(View.VISIBLE);
             edit.setClickable(true);
-
-            /*if (student.getAvatarUrl() != null) {
+            delete.setVisibility(View.VISIBLE);
+            delete.setClickable(true);
+            if (post.getImageUrl()!= null) {
                 Picasso.get()
-                        .load(student.getAvatarUrl())
-                        .into(avatarImv);
-            }*/
+                        .load(post.getImageUrl())
+                        .into(postPicture);
+            }
         }
     }
 

@@ -62,7 +62,6 @@ public class Post {
         this.lastUpdated = lastUpdated;
 
     }
-
     @NonNull
     public String getPostId() {
         return postId;
@@ -188,7 +187,6 @@ public class Post {
 
     public Map<String, Object> toJson() {
         Map<String, Object> json = new HashMap<String, Object>();
-        json.put("id",postId);
         json.put("category",category);
         json.put("title",title);
         json.put("description",description);
@@ -242,4 +240,3 @@ public class Post {
     }
 
 }
-

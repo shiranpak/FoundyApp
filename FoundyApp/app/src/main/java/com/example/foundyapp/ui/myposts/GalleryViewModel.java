@@ -1,11 +1,9 @@
-package com.example.foundyapp.ui.gallery;
+package com.example.foundyapp.ui.myposts;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.foundyapp.model.Model;
-import com.example.foundyapp.model.ModelFirebase;
 import com.example.foundyapp.model.Post;
 
 import java.util.List;
