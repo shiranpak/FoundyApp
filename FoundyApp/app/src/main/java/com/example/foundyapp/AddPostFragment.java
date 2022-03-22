@@ -259,10 +259,10 @@ public class AddPostFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         List<Place.Field> placeFields = Collections.singletonList(Place.Field.ADDRESS);
 
-    // Use the builder to create a FindCurrentPlaceRequest.
+        // Use the builder to create a FindCurrentPlaceRequest.
         FindCurrentPlaceRequest request = FindCurrentPlaceRequest.newInstance(placeFields);
 
-    // Call findCurrentPlace and handle the response (first check that the user has granted permission).
+        // Call findCurrentPlace and handle the response (first check that the user has granted permission).
         if (ContextCompat.checkSelfPermission(MyApplication.context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Task<FindCurrentPlaceResponse> placeResponse = placesClient.findCurrentPlace(request);
             placeResponse.addOnCompleteListener(task -> {

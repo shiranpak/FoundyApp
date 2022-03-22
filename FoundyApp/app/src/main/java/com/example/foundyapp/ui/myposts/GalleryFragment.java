@@ -1,16 +1,16 @@
-package com.example.foundyapp.ui.gallery;
+package com.example.foundyapp.ui.myposts;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,8 +20,7 @@ import com.example.foundyapp.R;
 import com.example.foundyapp.databinding.FragmentGalleryBinding;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
-import com.example.foundyapp.ui.home.HomeViewModel;
-import com.firebase.ui.auth.data.model.User;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -122,6 +121,10 @@ public class GalleryFragment extends Fragment {
         TextView category;
         TextView description;
         TextView userName;
+        ImageButton edit;
+        ImageButton delete;
+        ImageView postPicture;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -130,21 +133,26 @@ public class GalleryFragment extends Fragment {
             category = itemView.findViewById(R.id.post_category_input_tv);
             description = itemView.findViewById(R.id.post_description_input_tv);
             userName = itemView.findViewById(R.id.post_username_textview);
-
+            edit =  itemView.findViewById(R.id.post_edit);
+            delete =  itemView.findViewById(R.id.post_delete);
+            postPicture=itemView.findViewById(R.id.post_imageview);
         }
 
         public void bind(Post post){
-            date.setText(post.getDate().toString());
-            //location.setText(post.getLocation());
+            date.setText(post.getFormattedDate());
+            location.setText(post.getAddress());
             category.setText(post.getCategory());
             description.setText(post.getDescription());
             userName.setText(post.getUserId());
-
-            /*if (student.getAvatarUrl() != null) {
+            edit.setVisibility(View.VISIBLE);
+            edit.setClickable(true);
+            delete.setVisibility(View.VISIBLE);
+            delete.setClickable(true);
+            if (post.getImageUrl()!= null) {
                 Picasso.get()
-                        .load(student.getAvatarUrl())
-                        .into(avatarImv);
-            }*/
+                        .load(post.getImageUrl())
+                        .into(postPicture);
+            }
         }
     }
 

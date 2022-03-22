@@ -5,12 +5,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,8 +19,7 @@ import com.example.foundyapp.R;
 import com.example.foundyapp.databinding.FragmentHomeBinding;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
-import com.example.foundyapp.ui.gallery.GalleryFragment;
-import com.example.foundyapp.ui.gallery.GalleryViewModel;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -123,6 +121,7 @@ public class HomeFragment extends Fragment {
         TextView category;
         TextView description;
         TextView userName;
+        ImageView postImage;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -131,21 +130,23 @@ public class HomeFragment extends Fragment {
             category = itemView.findViewById(R.id.post_category_input_tv);
             description = itemView.findViewById(R.id.post_description_input_tv);
             userName = itemView.findViewById(R.id.post_username_textview);
+            postImage=itemView.findViewById(R.id.post_imageview);
 
         }
 
         public void bind(Post post){
-            date.setText(post.getDate().toString());
-            location.setText(post.getLocation().toString());
+            date.setText(post.getFormattedDate());
+            location.setText(post.getAddress());
             category.setText(post.getCategory());
             description.setText(post.getDescription());
             userName.setText(post.getUserId());
 
-            /*if (student.getAvatarUrl() != null) {
+            if (post.getImageUrl() != null) {
                 Picasso.get()
-                        .load(student.getAvatarUrl())
-                        .into(avatarImv);
-            }*/
+                        .load(post.getImageUrl())
+                        .into(postImage);
+            }
+
         }
     }
 
