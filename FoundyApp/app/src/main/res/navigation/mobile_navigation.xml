@@ -66,4 +66,17 @@
             android:id="@+id/action_edit_user_Fragment_to_MyDetailsFragment"
             app:destination="@id/MyDetailsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/searchPostsFragment"
+        android:name="com.example.foundyapp.SearchPostsFragment"
+        android:label="fragment_search_posts"
+        tools:layout="@layout/fragment_search_posts" >
+        <argument
+            android:name="postsArg"
+            app:argType="com.example.foundyapp.model.Post[]"
+            app:nullable="true" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_searchPostsFragment"
+        app:destination="@id/searchPostsFragment" />
 </navigation>

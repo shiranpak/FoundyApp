@@ -2,6 +2,8 @@ package com.example.foundyapp.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -17,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Entity(tableName = "posts")
-public class Post {
+public class Post implements Parcelable {
     final public static String COLLECTION_NAME = "posts";
     public final static String LAST_UPDATED = "lastUpdated";
     final static String POSTS_LAST_UPDATE = "POSTS_LAST_UPDATE";
@@ -51,6 +53,40 @@ public class Post {
         this.isDeleted = isDeleted;
         this.lastUpdated = lastUpdated;
     }
+
+    protected Post(Parcel in) {
+        postId = in.readString();
+        title = in.readString();
+        category = in.readString();
+        location = in.readParcelable(LatLng.class.getClassLoader());
+        if (in.readByte() == 0) {
+            date = null;
+        } else {
+            date = in.readLong();
+        }
+        description = in.readString();
+        type = in.readByte() != 0;
+        userId = in.readString();
+        isDeleted = in.readByte() != 0;
+        imageUrl = in.readString();
+        if (in.readByte() == 0) {
+            lastUpdated = null;
+        } else {
+            lastUpdated = in.readLong();
+        }
+    }
+
+    public static final Creator<Post> CREATOR = new Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
 
     @NonNull
     public String getPostId() {
@@ -195,5 +231,34 @@ public class Post {
         editor.commit();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(postId);
+        dest.writeString(title);
+        dest.writeString(category);
+        dest.writeParcelable(location, flags);
+        if (date == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(date);
+        }
+        dest.writeString(description);
+        dest.writeByte((byte) (type ? 1 : 0));
+        dest.writeString(userId);
+        dest.writeByte((byte) (isDeleted ? 1 : 0));
+        dest.writeString(imageUrl);
+        if (lastUpdated == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(lastUpdated);
+        }
+    }
 }
 
