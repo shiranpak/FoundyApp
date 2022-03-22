@@ -14,6 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -80,24 +81,27 @@ public class DrawerActivity extends AppCompatActivity {
                 email_drawer.setText(user.getEmail());
             }
         });*/
-
+        home = ((HomeFragment) getForegroundFragment());
 
         curvedBottomNavigationView = (CurvedBottomNavigationView)findViewById(R.id.bottom_navigation);
         curvedBottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.bottom_nav_losts_btn:
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.container, firstFragment).commit();
+                    home.setType(false);
                     return true;
 
                 case R.id.bottom_nav_findings_btn:
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.container, thirdFragment).commit();
+                    home.setType(true);
                     return true;
             }
             return false;
         });
 
     }
-
+    public Fragment getForegroundFragment(){
+        Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_drawer);
+        return navHostFragment == null ? null : navHostFragment.getChildFragmentManager().getFragments().get(0);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -113,14 +117,11 @@ public class DrawerActivity extends AppCompatActivity {
 
                 case R.id.search_by_place_btn:
                     navController.navigate(R.id.searchByPlaceFragment);
-//                    search_btn.setVisible(false);
                     return true;
                 case R.id.advanced_search_btn:
                     navController.navigate(R.id.advancedSearchFragment);
-//                    search_btn.setVisible(false);
                     return true;
                 default:
-//                    search_btn.setVisible(true);
                     NavigationUI.onNavDestinationSelected(item,navController);
             }
         }
