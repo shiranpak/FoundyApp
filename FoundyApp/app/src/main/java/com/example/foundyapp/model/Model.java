@@ -77,6 +77,10 @@ public class Model {
     public interface AddPostListener {
         void onComplete();
     }
+    public interface deletePostListener {
+        void onComplete();
+    }
+
     public interface SaveImageListener {
         void onComplete(String url);
     }
@@ -192,5 +196,6 @@ public class Model {
     }
     public void editUser( User user,EditUserListener listener){ modelFirebase.editUser( user,listener); }
     public void signOutFirebase (signOutUserListener listener) { modelFirebase.SignOut(listener); }
-    public boolean logincCheck(){return modelFirebase.checkIfLoggedIn();}
+    public boolean loginCheck(){return modelFirebase.checkIfLoggedIn();}
+    public void deletePost(String postId,deletePostListener listener){modelFirebase.deletePost(postId,listener);}
 }

@@ -19,7 +19,11 @@
         android:id="@+id/nav_gallery"
         android:name="com.example.foundyapp.ui.myposts.GalleryFragment"
         android:label="@string/menu_myposts"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_gallery" >
+        <action
+            android:id="@+id/action_nav_gallery_to_editPostFragment"
+            app:destination="@id/editPostFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/MyDetailsFragment"
@@ -79,4 +83,9 @@
     <action
         android:id="@+id/action_global_searchPostsFragment"
         app:destination="@id/searchPostsFragment" />
+    <fragment
+        android:id="@+id/editPostFragment"
+        android:name="com.example.foundyapp.ui.myposts.EditPostFragment"
+        android:label="fragment_edit_post"
+        tools:layout="@layout/fragment_edit_post" />
 </navigation>

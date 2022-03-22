@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.ModelFirebase;
+import com.example.foundyapp.model.PicassoCircleTransformation;
+import com.example.foundyapp.model.User;
 import com.example.foundyapp.model.UserSession;
 import com.example.foundyapp.ui.home.HomeFragment;
 import com.example.foundyapp.ui.home.HomeFragmentDirections;
@@ -25,6 +28,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.foundyapp.databinding.ActivityDrawerBinding;
+import com.squareup.picasso.Picasso;
 
 public class DrawerActivity extends AppCompatActivity {
 
@@ -79,13 +83,15 @@ public class DrawerActivity extends AppCompatActivity {
         View header=navigationView.getHeaderView(0);
         name_drawer=(TextView) header.findViewById(R.id.nameDrawer);
         email_drawer=(TextView) header.findViewById(R.id.emailText);
-//        Model.instance.getUser(new Model.GetUserById() {
-//            @Override
-//            public void onComplete(User user) {
-//                name_drawer.setText(user.getFullName());
-//                email_drawer.setText(user.getEmail());
-//            }
-//        });
+        ImageView avatar = header.findViewById(R.id.headerImage);
+        Model.instance.getUser(new Model.GetUserById(){
+            @Override
+            public void onComplete(User user) {
+                name_drawer.setText(user.getFullName());
+                email_drawer.setText(user.getEmail());
+                Picasso.get().load(user.getImage()).transform(new PicassoCircleTransformation()).into(avatar);
+            }
+        });
 
 
         curvedBottomNavigationView = (CurvedBottomNavigationView)findViewById(R.id.bottom_navigation);

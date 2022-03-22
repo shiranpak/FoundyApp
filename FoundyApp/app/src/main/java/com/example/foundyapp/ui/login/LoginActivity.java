@@ -79,7 +79,7 @@ public class LoginActivity extends Activity {
         if (checkData(email,password)!=0)
         {
             Model.instance.login(email,password,getApplicationContext());
-            if(Model.instance.logincCheck()) {
+            if(Model.instance.loginCheck()) {
                 session.createUserLoginSession(password,email);
                 toFeedActivity();
             }
