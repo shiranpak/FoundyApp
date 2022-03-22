@@ -49,7 +49,7 @@ public class Post {
     public Post(){}
 
 
-    public Post(String postid, String title, String category, LatLng location, Long date, String description, boolean type, String userId, boolean isDeleted , Long lastUpdated) {
+    public Post(@NonNull String postid, String title, String category, LatLng location, Long date, String description, boolean type, String userId, boolean isDeleted , Long lastUpdated) {
         this.postId = postid;
         this.category = category;
         this.title = title;
@@ -62,6 +62,7 @@ public class Post {
         this.lastUpdated = lastUpdated;
 
     }
+
     @NonNull
     public String getPostId() {
         return postId;
@@ -187,6 +188,7 @@ public class Post {
 
     public Map<String, Object> toJson() {
         Map<String, Object> json = new HashMap<String, Object>();
+        json.put("id",postId);
         json.put("category",category);
         json.put("title",title);
         json.put("description",description);

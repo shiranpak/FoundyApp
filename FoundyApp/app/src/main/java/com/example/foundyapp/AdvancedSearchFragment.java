@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,11 +56,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AdvancedSearchFragment extends Fragment {
@@ -71,10 +74,13 @@ public class AdvancedSearchFragment extends Fragment {
     List<City> citiesList;
     ProgressBar progressBar;
     Button searchBtn;
+    Geocoder gcd;
     boolean currentType = true; //true = findings
     private City selectedCity = null;
     private Category selectedCategory = null;
     PostViewModel postViewModel;
+    Long startDate;
+    Long endDate;
     public AdvancedSearchFragment() {
         // Required empty public constructor
     }
@@ -103,6 +109,7 @@ public class AdvancedSearchFragment extends Fragment {
 
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_advanced_search, container, false);
+        gcd = new Geocoder(MyApplication.context, Locale.getDefault());
 
         progressBar = view.findViewById(R.id.adv_progress);
         progressBar.setVisibility(View.VISIBLE);
@@ -112,10 +119,12 @@ public class AdvancedSearchFragment extends Fragment {
         if (toggleGroup != null) {
             toggleGroup.addOnButtonCheckedListener(
                     (group, checkedId, isChecked) -> {
-                        if (checkedId == R.id.adv_findings_toggle) {
-                            currentType = true;
-                        }else if(checkedId == R.id.adv_losts_toggle){
-                            currentType = false;
+                        if(isChecked) {
+                            if (checkedId == R.id.adv_findings_toggle) {
+                                currentType = true;
+                            } else if (checkedId == R.id.adv_losts_toggle) {
+                                currentType = false;
+                            }
                         }
                     });
         }
@@ -198,11 +207,14 @@ public class AdvancedSearchFragment extends Fragment {
         // date picker we need to pass the pair of Long
         // Long, because the start date and end date is
         // store as "Long" type value
+        Calendar now = Calendar.getInstance();
         CalendarConstraints.Builder calendarCons = new CalendarConstraints.Builder()
                 .setValidator(DateValidatorPointBackward.now());
         MaterialDatePicker.Builder<Pair<Long, Long>> materialDateBuilder =
                 MaterialDatePicker.Builder.dateRangePicker()
                         .setCalendarConstraints(calendarCons.build());
+
+        materialDateBuilder.setSelection(new Pair(now.getTimeInMillis(), now.getTimeInMillis()));
 
         // now define the properties of the
         // materialDateBuilder
@@ -228,14 +240,19 @@ public class AdvancedSearchFragment extends Fragment {
                     materialDatePicker.show(getParentFragmentManager(), "MATERIAL_DATE_PICKER");
                 });
 
+        //default dates
+        startDate = endDate = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis();
+        fromDateTextView.setText(DateFormat.format("dd/MM/yyyy", new Date(startDate)).toString());
+        toDateTextView.setText(DateFormat.format("dd/MM/yyyy",  new Date(endDate)).toString());
+
         // now handle the positive button click from the
         // material design date picker
         materialDatePicker.addOnPositiveButtonClickListener(
                 (MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>>)
                         selection -> {
 
-                    Long startDate = selection.first;
-                    Long endDate = selection.second;
+                    startDate = selection.first;
+                    endDate = selection.second;
                     Date sDate = new Date(startDate);
                     Date eDate = new Date(endDate);
                     String startDateString = DateFormat.format("dd/MM/yyyy", sDate).toString();
@@ -249,35 +266,79 @@ public class AdvancedSearchFragment extends Fragment {
                 });
 
 
+
         return view;
     }
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void searchForPosts(){
-        if(postViewModel.getData().getValue() == null || postViewModel.getData().getValue().size() == 0)
-        {
-            Toast.makeText(MyApplication.context, "There is no posts found", Toast.LENGTH_LONG).show();
-            return;
-        }
-        else {
-            List<Post> allPosts = postViewModel.getData().getValue();
-            allPosts.stream().filter(post -> post.isType() == currentType);
-            if (selectedCity != null) {
-                Geocoder gcd = new Geocoder(MyApplication.context, Locale.getDefault());
-                double lat = selectedCity.getLocation().latitude;
-                double lng = selectedCity.getLocation().longitude;
-                List<Address> addresses = null;
-                try {
-                    addresses = gcd.getFromLocation(lat, lng, 1);
-
-                    if (addresses.size() > 0) {
-                        Log.d("TAG", addresses.get(0).getLocality().toString());
-                    } else {
-
+    public void searchForPosts() {
+        Model.instance.executor.execute(() -> {
+            if (postViewModel.getData().getValue() == null || postViewModel.getData().getValue().size() == 0) {
+                //Toast.makeText(MyApplication.context, "There is no posts at all", Toast.LENGTH_LONG).show();
+                return;
+            }
+            else {
+                if (selectedCity == null || selectedCategory == null) {
+                    //Toast.makeText(MyApplication.context, "Some details are missing", Toast.LENGTH_LONG).show();
+                    return;
+                } else {
+                    String cityName = getSelectedCity();
+                    if (TextUtils.isEmpty(cityName)) {
+                         /*Toast.makeText(MyApplication.context, "Unexpected Problem :(", Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);*/
+                        return; // or break, continue, throw
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    else {
+                        //
+                        String selectedCat =  selectedCategory.getName();
+                        List<Post> collector =  postViewModel.getData().getValue().stream().
+                                filter(post -> post.isType() == currentType
+                                && ((post.getLocation() != null) && getCityOfPost(post.getLocation()).equals(cityName))
+                                && post.getCategory().equals(selectedCat)
+                                        && (post.getDate() >= startDate && post.getDate() <= endDate)  ).collect(Collectors.toList());
+                        Log.d("TAG", "" + collector.size());
+                    }
                 }
             }
+        });
+    }
+
+    String getCityOfPost(LatLng location){
+        if(location != null){
+            double lat = selectedCity.getLocation().latitude;
+            double lng = selectedCity.getLocation().longitude;
+            List<Address> addresses = null;
+            try {
+                addresses = gcd.getFromLocation(lat, lng, 1);
+
+                if (addresses.size() > 0) {
+                    return addresses.get(0).getLocality();
+                }
+                else {
+                    return null;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        return  null;
+    }
+    public String getSelectedCity(){
+        if (selectedCity != null) {
+            double lat = selectedCity.getLocation().latitude;
+            double lng = selectedCity.getLocation().longitude;
+            List<Address> addresses = null;
+            try {
+                addresses = gcd.getFromLocation(lat, lng, 1);
+
+                if (addresses.size() > 0) {
+                     return addresses.get(0).getLocality();
+                }
+                else {
+                     return null;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }

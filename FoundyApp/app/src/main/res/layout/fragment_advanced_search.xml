@@ -13,14 +13,14 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
-        app:checkedButton="@id/findings_toggle"
+        app:checkedButton="@id/adv_findings_toggle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:singleSelection="true">
 
         <Button
-            android:id="@+id/findings_toggle"
+            android:id="@+id/adv_findings_toggle"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
             android:text="Findings" />
 
         <Button
-            android:id="@+id/losts_toggle"
+            android:id="@+id/adv_losts_toggle"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -104,16 +104,15 @@
 
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/add_item_name_tf"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/adv_city_list">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/from_date_tf"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:hint="From Date"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar">
 
@@ -125,9 +124,9 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/to_date_tf"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginStart="24dp"
             android:hint="To Date"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -141,28 +140,6 @@
 
     </LinearLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/add_item_name_tf"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:hint="Description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pick_date_layout">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="top|left"
-            android:inputType="textMultiLine"
-            android:lines="2"
-            android:maxLines="4" />
-    </com.google.android.material.textfield.TextInputLayout>
-
     <Button
         android:id="@+id/adv_search_btn"
         style="@style/Widget.MaterialComponents.Button.Icon"
@@ -175,5 +152,5 @@
         app:icon="@android:drawable/ic_menu_search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_item_name_tf" />
+        app:layout_constraintTop_toBottomOf="@+id/pick_date_layout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

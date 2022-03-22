@@ -71,10 +71,12 @@ public class SearchByPlaceFragment extends Fragment {
         if (toggleGroup != null) {
             toggleGroup.addOnButtonCheckedListener(
                     (group, checkedId, isChecked) -> {
-                        if (checkedId == R.id.findings_toggle) {
-                            mapFragment.ShowFindings();
-                        }else if(checkedId == R.id.losts_toggle){
-                            mapFragment.ShowLosts();
+                        if (isChecked) {
+                            if (group.getCheckedButtonId() == R.id.findings_toggle) {
+                                mapFragment.ShowFindings();
+                            } else {
+                                mapFragment.ShowLosts();
+                            }
                         }
                     });
         }

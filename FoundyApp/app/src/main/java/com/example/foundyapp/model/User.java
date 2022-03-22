@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.example.foundyapp.R;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class User {
@@ -17,13 +18,13 @@ public class User {
     public User (String fullName,String email,String userId){
 
         this.userId=userId;
-        this.email=email;
+        this.email=email.toLowerCase();
         this.fullName=fullName;
         this.image=null;
     }
     public User (String fullName,String email,String image,String userId) {
         this.userId=userId;
-        this.email=email;
+        this.email=email.toLowerCase();
         this.fullName=fullName;
         this.image=image;
 
