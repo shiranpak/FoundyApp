@@ -1,11 +1,14 @@
 package com.example.foundyapp.model;
-
+import android.location.Address;
+import android.location.Geocoder;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.example.foundyapp.MyApplication;
@@ -13,7 +16,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FieldValue;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Entity(tableName = "posts")
@@ -35,6 +43,8 @@ public class Post {
     private boolean isDeleted = false;
     private String imageUrl;
     private Long lastUpdated = new Long(0);
+//    @Ignore
+    private String address = "";
 
     public Post(){}
 
@@ -50,10 +60,36 @@ public class Post {
         this.userId = userId;
         this.isDeleted = isDeleted;
         this.lastUpdated = lastUpdated;
+
     }
     @NonNull
     public String getPostId() {
         return postId;
+    }
+
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    private void setAddressFromLocation(LatLng location) {
+        Geocoder gcd = new Geocoder(MyApplication.getContext(), Locale.getDefault());
+        try {
+            List<Address> addressList = gcd.getFromLocation(
+                    location.latitude, location.longitude, 1);
+            if (addressList != null && addressList.size() > 0) {
+                Address address = addressList.get(0);
+
+                StringBuilder sb = new StringBuilder();
+                sb.append(address.getThoroughfare()).append(", ");
+                sb.append(address.getLocality()).append(", ");
+                sb.append(address.getCountryName());
+                this.address = sb.toString();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void setPostId(@NonNull String postId) {
@@ -123,7 +159,6 @@ public class Post {
         this.userId = userId;
     }
 
-
     public String getImageUrl() {
         return imageUrl;
     }
@@ -140,6 +175,15 @@ public class Post {
         this.type = type;
     }
 
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getFormattedDate() {
+        DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT);
+        return df.format(this.getDate());
+    }
 
     public Map<String, Object> toJson() {
         Map<String, Object> json = new HashMap<String, Object>();
@@ -178,6 +222,7 @@ public class Post {
 
         Post post = new Post(id, title,category,location,date,description,type,user,isDeleted,lastUpdated);
         post.setImageUrl(imageUrl);
+        post.setAddressFromLocation(location);
         return post;
     }
 

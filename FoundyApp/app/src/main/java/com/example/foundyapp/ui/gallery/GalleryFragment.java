@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -122,6 +124,7 @@ public class GalleryFragment extends Fragment {
         TextView category;
         TextView description;
         TextView userName;
+        ImageButton edit;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -130,15 +133,17 @@ public class GalleryFragment extends Fragment {
             category = itemView.findViewById(R.id.post_category_input_tv);
             description = itemView.findViewById(R.id.post_description_input_tv);
             userName = itemView.findViewById(R.id.post_username_textview);
-
+            edit =  itemView.findViewById(R.id.post_edit);
         }
 
         public void bind(Post post){
-            date.setText(post.getDate().toString());
-            //location.setText(post.getLocation());
+            date.setText(post.getFormattedDate());
+            location.setText(post.getAddress());
             category.setText(post.getCategory());
             description.setText(post.getDescription());
             userName.setText(post.getUserId());
+            edit.setVisibility(View.VISIBLE);
+            edit.setClickable(true);
 
             /*if (student.getAvatarUrl() != null) {
                 Picasso.get()

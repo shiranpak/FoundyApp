@@ -1,6 +1,8 @@
 package com.example.foundyapp.ui.home;
 
+import android.app.Application;
 import android.content.Context;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.foundyapp.MyApplication;
 import com.example.foundyapp.R;
 import com.example.foundyapp.databinding.FragmentHomeBinding;
 import com.example.foundyapp.model.Model;
@@ -23,7 +26,9 @@ import com.example.foundyapp.model.Post;
 import com.example.foundyapp.ui.gallery.GalleryFragment;
 import com.example.foundyapp.ui.gallery.GalleryViewModel;
 
+import java.text.DateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
@@ -135,8 +140,8 @@ public class HomeFragment extends Fragment {
         }
 
         public void bind(Post post){
-            date.setText(post.getDate().toString());
-            location.setText(post.getLocation().toString());
+            date.setText(post.getFormattedDate());
+            location.setText(post.getAddress());
             category.setText(post.getCategory());
             description.setText(post.getDescription());
             userName.setText(post.getUserId());

@@ -87,6 +87,7 @@ public class Model {
             executor.execute(() -> {
                 Long lud = 0L;
                 for (Post post : list) {
+                    // post.address =  reversGeoCode(post.Location)
                     AppLocalDb.db.postDao().insert(post);
                     // if the post deleted in the firebase, delete him from the local db
                     if (post.getIsDeleted())
