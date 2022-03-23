@@ -1,6 +1,7 @@
 package com.example.foundyapp.model;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.example.foundyapp.R;
 
@@ -66,6 +67,7 @@ public class User {
         String name=(String) json.get("name");
         String email=(String) json.get("email");
         String image=(String) json.get("image");
+        Log.d("test",id+ " "+name+" "+email+ " "+image);
         User user= new User(name,email,image,id);
         return user;
     }

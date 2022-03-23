@@ -19,6 +19,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.Navigation;
 
 import android.os.ParcelFileDescriptor;
@@ -101,7 +103,7 @@ public class AddPostFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private User currentUser;
+    private LiveData<User> currentUser;
 
     public AddPostFragment() {
         // Required empty public constructor
@@ -138,12 +140,7 @@ public class AddPostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
-        Model.instance.getCurrentUser(new Model.GetUserById() {
-            @Override
-            public void onComplete(User user) {
-                currentUser = new User(user.getFullName(),user.getEmail(),user.getImage(),user.getUserId());
-            }
-        });
+        currentUser = Model.instance.getCurrentUser();
         progressBar = view.findViewById(R.id.add_progress);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -395,7 +392,7 @@ public class AddPostFragment extends Fragment {
         post.setDate(selectedDate);
         post.setType(postType);
         post.setIsDeleted(false);
-        post.setUserId(currentUser.getUserId());
+        post.setUserId(currentUser.getValue().getUserId());
 
         if (imageBitmap == null) {
             Model.instance.addPost(post, () -> {

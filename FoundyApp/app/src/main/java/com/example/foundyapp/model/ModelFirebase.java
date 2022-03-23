@@ -116,7 +116,7 @@ public class ModelFirebase {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             Post post = Post.create(doc.getId(), doc.getData());
-                            if (post != null && post.getIsDeleted()) {
+                            if (post != null && !post.getIsDeleted()) {
                                 list.add(post);
                             }
                         }
@@ -278,15 +278,28 @@ public void SignOut(Model.signOutUserListener listener){
         mAuth.signOut();
     }
 
+    public void getUser(String id,Model.GetUserById listener){
+            db.collection(user.CollectionName).document(id).get().addOnCompleteListener(task -> {
+                User user = null;
+                if (task.isSuccessful() && task.getResult() != null) {
+                    Object userData = task.getResult().getData();
+                    if(userData!=null){
+                        user = User.create(task.getResult().getData());
+                    }
+                }
+                listener.onComplete(user);
+            });
+    }
 
     public void getCurrentUser(Model.GetUserById listener){
         if (checkIfLoggedIn()) {
             db.collection(user.CollectionName).document(firebaseUser.getUid()).get().addOnCompleteListener(task -> {
                 User user = null;
                 if (task.isSuccessful() & task.getResult() != null) {
-                    user = user.create(task.getResult().getData());
+                    user = User.create(task.getResult().getData());
                 }
                 listener.onComplete(user);
+
             });
         }
 

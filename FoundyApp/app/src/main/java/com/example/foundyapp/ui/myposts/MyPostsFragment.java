@@ -57,7 +57,6 @@ public class MyPostsFragment extends Fragment {
         swipeRefresh = view.findViewById(R.id.myposts_swiperefresh);
         swipeRefresh.setOnRefreshListener(() -> Model.instance.refreshMyPostsList());
 
-        myPosts = myPostsViewModel.getMyPosts().getValue();
         adapter = new MyRecyclerViewAdapter();
         adapter.notifyDataSetChanged();
         rv.setLayoutManager(new LinearLayoutManager(this.getContext()));
@@ -146,11 +145,15 @@ public class MyPostsFragment extends Fragment {
         }
 
         public void bind(Post post){
+
+            currentUser = myPostsViewModel.getCurrentUser().getValue();
             date.setText(post.getFormattedDate());
             location.setText(post.getAddress());
             category.setText(post.getCategory());
             description.setText(post.getDescription());
-            userName.setText(post.getUserId());
+
+            //if(currentUser!=null){
+            userName.setText(currentUser!=null? currentUser.getFullName(): "");
             /*if (currentUser.getImage() != null) {
                 Picasso.get()
                         .load(currentUser.getImage())

@@ -3,9 +3,11 @@ package com.example.foundyapp.ui.home;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -26,6 +29,7 @@ import com.example.foundyapp.R;
 import com.example.foundyapp.databinding.FragmentHomeBinding;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
+import com.example.foundyapp.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
@@ -124,11 +128,8 @@ public class HomeFragment extends Fragment {
 
     private class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
-        private Context context;
-        private List<Post> myPostslist;
-
         public MyRecyclerViewAdapter(List<Post> list) {
-            this.myPostslist = list;
+
         }
 
         @NonNull
@@ -173,8 +174,8 @@ public class HomeFragment extends Fragment {
         TextView location;
         TextView category;
         TextView description;
-        ImageView userProfileImage;
         TextView userName;
+        ImageView userProfileImage;
         ImageView postImage;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -194,7 +195,11 @@ public class HomeFragment extends Fragment {
             location.setText(post.getAddress());
             category.setText(post.getCategory());
             description.setText(post.getDescription());
-            userName.setText(post.getUserId());
+            LiveData<User> user = Model.instance.getUser(post.getUserId());
+            user.observe(getViewLifecycleOwner(),liveDataUser -> {
+                Log.d("test",liveDataUser.getFullName());
+                userName.setText(liveDataUser.getFullName());
+            });
 
             if (post.getImageUrl() != null) {
                 Picasso.get()

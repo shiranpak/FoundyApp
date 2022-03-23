@@ -10,6 +10,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.navigation.Navigation;
 
 import android.os.ParcelFileDescriptor;
@@ -47,7 +48,7 @@ public class Edit_user_Fragment extends Fragment {
  ImageButton imageButton;
  static final int REQUEST_IMAGE_CAPTURE = 1;
  static final int RESULT_OK=-1;
-
+private LiveData<User> currentUser;
 
     public Edit_user_Fragment() {
         // Required empty public constructor
@@ -69,22 +70,18 @@ public class Edit_user_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        currentUser = Model.instance.getCurrentUser();
         View view = inflater.inflate(R.layout.fragment_edit_user, container, false);
         progressBar=view.findViewById(R.id.progressBarEdit);
         imageButton=view.findViewById(R.id.btn_image);
         avatar=view.findViewById(R.id.user_image);
         nameEt = view.findViewById(R.id.edit_fullName);
         email=view.findViewById(R.id.edit_mail);
-        Model.instance.getCurrentUser(new Model.GetUserById() {
-            @Override
-            public void onComplete(User user) {
-                nameEt.setText(user.getFullName());
-                email.setText(user.getEmail());
-                if(user.getImage()!=null){
-                    Picasso.get().load(user.getImage()).error(R.drawable.icon_user).into(avatar);
-                }
-            }
-        });
+        nameEt.setText(currentUser.getValue().getFullName());
+        email.setText(currentUser.getValue().getEmail());
+        if(currentUser.getValue().getImage()!=null){
+            Picasso.get().load(currentUser.getValue().getImage()).error(R.drawable.icon_user).into(avatar);
+        }
         //creates a default user
         imageButton.setOnClickListener((v)->
         {
