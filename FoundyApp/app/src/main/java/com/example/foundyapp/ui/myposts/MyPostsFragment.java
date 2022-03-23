@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -154,7 +155,6 @@ public class MyPostsFragment extends Fragment {
             category.setText(post.getCategory());
             description.setText(post.getDescription());
 
-            //if(currentUser!=null){
             userName.setText(currentUser!=null? currentUser.getFullName(): "");
 
             if (currentUser.getImage() != null) {
@@ -173,8 +173,7 @@ public class MyPostsFragment extends Fragment {
             }
 
             edit.setOnClickListener((v)->{
-
-
+                Navigation.findNavController(v).navigate(MyPostsFragmentDirections.actionNavGalleryToEditPostFragment(post.getPostId()));
             });
 
             delete.setOnClickListener((v)-> {

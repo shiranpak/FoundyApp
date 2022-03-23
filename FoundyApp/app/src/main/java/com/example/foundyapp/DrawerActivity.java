@@ -85,9 +85,9 @@ public class DrawerActivity extends AppCompatActivity {
             if (user != null) {
                 name_drawer.setText(user.getFullName());
                 email_drawer.setText(user.getEmail());
-                if (user.getImage() != null) {
-                    Picasso.get().load(user.getImage()).transform(new PicassoCircleTransformation()).into(avatar);
-                }
+//                if (user.getImage() != null) {
+//                    Picasso.get().load(user.getImage()).transform(new PicassoCircleTransformation()).into(avatar);
+//                }
             }
         });
     }

@@ -1,6 +1,5 @@
 package com.example.foundyapp;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,11 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.navigation.Navigation;
 
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
@@ -36,15 +31,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.example.foundyapp.model.Category;
-import com.example.foundyapp.model.City;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
 import com.example.foundyapp.model.User;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
@@ -100,7 +94,7 @@ public class AddPostFragment extends Fragment {
     private AutocompleteSupportFragment autocompleteFragment;
     private boolean postType;
     Bitmap imageBitmap = null;
-    // TODO: Rename and change types of parameters
+
     private String mParam1;
     private String mParam2;
     private LiveData<User> currentUser;
@@ -109,15 +103,6 @@ public class AddPostFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddPostFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static AddPostFragment newInstance(String param1, String param2) {
         AddPostFragment fragment = new AddPostFragment();
         Bundle args = new Bundle();
@@ -141,14 +126,14 @@ public class AddPostFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
         currentUser = Model.instance.getCurrentUser();
-        progressBar = view.findViewById(R.id.add_progress);
+        progressBar = view.findViewById(R.id.edit_progress);
         progressBar.setVisibility(View.VISIBLE);
 
         saveBtn = view.findViewById(R.id.add_submitBtn);
         saveBtn.setOnClickListener(v -> savePost());
 
-        nameTextView = view.findViewById(R.id.add_item_title_tf);
-        descriptionTextView = view.findViewById(R.id.add_desc_text);
+        nameTextView = view.findViewById(R.id.edit_item_title_tf);
+        descriptionTextView = view.findViewById(R.id.edit_desc_text);
 
         postType = AddPostFragmentArgs.fromBundle(getArguments()).getPostType();
 
@@ -250,7 +235,7 @@ public class AddPostFragment extends Fragment {
                 Log.i("Tag", "An error occurred: " + status);
             }
         });
-        itemImage = view.findViewById(R.id.add_image_upload);
+        itemImage = view.findViewById(R.id.edit_image_upload);
         itemImage.setOnClickListener(v -> {
             selectImage();
         });
@@ -285,7 +270,7 @@ public class AddPostFragment extends Fragment {
                     Exception exception = task.getException();
                     if (exception instanceof ApiException) {
                         ApiException apiException = (ApiException) exception;
-                        Log.e("TAG", "Place not found: " + apiException.getStatusCode());
+                        Toast.makeText(MyApplication.context, "Place not found, Try Again", Toast.LENGTH_LONG).show();
                     }
                     progressBar.setVisibility(View.GONE);
                 }
