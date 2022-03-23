@@ -12,4 +12,8 @@ public class PostViewModel extends ViewModel {
     public LiveData<List<Post>> getData() {
         return data;
     }
+    LiveData<User> currentUser;
+    public LiveData<User> getCurrentUser(){
+        return currentUser;
+    }
 }
