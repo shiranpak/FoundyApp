@@ -4,8 +4,8 @@
     <item
         android:id="@+id/bottom_nav_losts_btn"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_foreground"
-        android:title="Losts"
+        android:icon="@drawable/lost"
+        android:title="Lost"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/bottom_nav_add_btn"
@@ -15,7 +15,7 @@
     <item
         android:id="@+id/bottom_nav_findings_btn"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_foreground"
-        android:title="Findings"
+        android:icon="@drawable/find"
+        android:title="Found"
         app:showAsAction="ifRoom"/>
 </menu>
