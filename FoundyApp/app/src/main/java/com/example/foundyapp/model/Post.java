@@ -51,6 +51,13 @@ public class Post implements Parcelable {
 
     public Post(){}
 
+    public Post (String postId, String title, String category,String imageUrl){
+        this.postId= postId;
+        this.title=title;
+        this.category= category;
+        this.imageUrl=imageUrl;
+    }
+
 
     public Post(@NonNull String postid, String title, String category, LatLng location, Long date, String description, boolean type, String userId, boolean isDeleted , Long lastUpdated) {
         this.postId = postid;

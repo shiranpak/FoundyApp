@@ -233,9 +233,17 @@ public class HomeFragment extends Fragment {
             user.observe(getViewLifecycleOwner(),liveDataUser -> {
                 userName.setText(liveDataUser.getFullName());
                 contactInfo.setText(liveDataUser.getEmail());
-                Picasso.get()
-                        .load(user.getValue().getImage())
-                        .into(userProfileImage);
+                if(user.getValue().getImage()!=null) {
+                    Picasso.get()
+                            .load(user.getValue().getImage())
+                            .into(userProfileImage);
+                }
+                else
+                {
+                    Picasso.get()
+                            .load(R.drawable.fui_ic_anonymous_white_24dp)
+                            .into(userProfileImage);
+                }
             });
 
             if (post.getImageUrl() != null) {
