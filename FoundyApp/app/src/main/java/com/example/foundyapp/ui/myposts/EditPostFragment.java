@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
@@ -65,8 +66,8 @@ public class EditPostFragment extends Fragment {
     private Button saveBtn;
     private Button cancelBtn;
     private ImageView itemImage;
-    private Switch useMyLocation;
-    TextInputEditText  nameTextView, descriptionTextView;
+    EditText nameTextView, descriptionTextView;
+
     public EditPostFragment() {// Required empty public constructor
     }
     public static EditPostFragment newInstance(String param1, String param2) {
@@ -91,10 +92,10 @@ public class EditPostFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_edit_post, container, false);
         String pid = EditPostFragmentArgs.fromBundle(getArguments()).getPostid();
 
-        nameTextView=view.findViewById(R.id.edit_item_title_tf);
-        itemImage=view.findViewById(R.id.edit_image_upload);
-        descriptionTextView=view.findViewById(R.id.edit_desc_text);
-        progressBar = view.findViewById(R.id.edit_progress);
+        nameTextView=view.findViewById(R.id.editP_item_title_tf);
+        itemImage=view.findViewById(R.id.editP_image_upload);
+        descriptionTextView=view.findViewById(R.id.editP_desc_text);
+        progressBar = view.findViewById(R.id.editP_progress);
         saveBtn = view.findViewById(R.id.edit_submitBtn);
         categoriesTextView = (AutoCompleteTextView) view.findViewById(R.id.category_selection_dp);
         cancelBtn = view.findViewById(R.id.edit_cancelBtn);
@@ -104,11 +105,9 @@ public class EditPostFragment extends Fragment {
             if (!list.isEmpty()) {
                 //Categories
                 categoriesList = (List<Category>) list;
-
                 String[] categoriesListArr = new String[categoriesList.size()];
                 for (int i = 0; i < categoriesList.size(); i++)
                     categoriesListArr[i] = categoriesList.get(i).getName();
-
 
                 ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_dropdown_item_1line, categoriesListArr);
@@ -128,7 +127,7 @@ public class EditPostFragment extends Fragment {
                         into(itemImage);}
                 else
                     Picasso.get().load(R.drawable.icons8_edit_image_127px_3).into(itemImage);
-                //int i = categoriesList.indexOf(post.getCategory());
+                int i = categoriesList.indexOf(post.getCategory());
 
             }
         });
@@ -140,10 +139,6 @@ public class EditPostFragment extends Fragment {
         });
         Post p = new Post();
 
-        p.setPostId(pid);
-        p.setDescription(descriptionTextView.getText().toString());
-        p.setTitle(nameTextView.getText().toString());
-
 
         cancelBtn.setOnClickListener(v->
                 Navigation.findNavController(v).navigate(EditPostFragmentDirections.actionEditPostFragmentToNavGallery()));
@@ -151,6 +146,9 @@ public class EditPostFragment extends Fragment {
             String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
             //post.setLastUpdated(currentTime);
             if(imageBitmap==null){
+                p.setPostId(pid);
+                p.setDescription(descriptionTextView.getText().toString());
+                p.setTitle(nameTextView.getText().toString());
                 Model.instance.editMyPost(p);}
             else
             {
