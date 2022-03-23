@@ -14,14 +14,19 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.foundyapp.CurvedBottomNavigationView;
 import com.example.foundyapp.R;
 import com.example.foundyapp.databinding.FragmentHomeBinding;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -33,8 +38,10 @@ public class HomeFragment extends Fragment {
     HomeViewModel homeViewModel;
     List<Post> allPostList;
     MyRecyclerViewAdapter adapter;
+    private CurvedBottomNavigationView curvedBottomNavigationView;
+    private FloatingActionButton addPostBtn;
     public boolean type = false;
-
+    NavController navController;
     public boolean isType() {
         return type;
     }
@@ -58,13 +65,19 @@ public class HomeFragment extends Fragment {
         RecyclerView rv = view.findViewById(R.id.home_posts_rv);
         swipeRefresh = view.findViewById(R.id.home_posts_swiperefresh);
         swipeRefresh.setOnRefreshListener(() -> Model.instance.refreshPostsList());
-
+        addPostBtn = view.findViewById(R.id.add_post_btn);
         allPostList = homeViewModel.getData().getValue();
         adapter = new MyRecyclerViewAdapter(allPostList);
         adapter.notifyDataSetChanged();
         rv.setLayoutManager(new LinearLayoutManager(this.getContext()));
         rv.setAdapter(adapter);
-
+        addPostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navController= Navigation.findNavController(getActivity(), R.id.nav_host_fragment_content_drawer);
+                navController.navigate(HomeFragmentDirections.actionNavHomeToAddPostTypeSelectFragment());
+            }
+        });
         homeViewModel.getData().observe(getViewLifecycleOwner(), list1 -> refreshPostList());
         swipeRefresh.setRefreshing(Model.instance.getPostListLoadingState().getValue() == Model.ListLoadingState.loading);
         Model.instance.getPostListLoadingState().observe(getViewLifecycleOwner(), postListLoadingState -> {
@@ -76,6 +89,19 @@ public class HomeFragment extends Fragment {
 
         });
 
+        curvedBottomNavigationView = (CurvedBottomNavigationView)view.findViewById(R.id.bottom_navigation);
+        curvedBottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.bottom_nav_losts_btn:
+                    setType(false);
+                    return true;
+
+                case R.id.bottom_nav_findings_btn:
+                    setType(true);
+                    return true;
+            }
+            return false;
+        });
         return view;
     }
 

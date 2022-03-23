@@ -36,11 +36,7 @@ public class DrawerActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityDrawerBinding binding;
     private NavController navController;
-    private CurvedBottomNavigationView curvedBottomNavigationView;
-    private FloatingActionButton addPostBtn;
     UserSession session;
-    ModelFirebase db;
-    private HomeFragment home;
     TextView name_drawer,email_drawer;
 
 
@@ -49,7 +45,6 @@ public class DrawerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         session = new UserSession(getApplicationContext());
-        db = new ModelFirebase();
         binding = ActivityDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarDrawer.toolbar);
@@ -95,25 +90,9 @@ public class DrawerActivity extends AppCompatActivity {
         });
 
 
-        curvedBottomNavigationView = (CurvedBottomNavigationView)findViewById(R.id.bottom_navigation);
-        curvedBottomNavigationView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.bottom_nav_losts_btn:
-                    home.setType(false);
-                    return true;
-
-                case R.id.bottom_nav_findings_btn:
-                    home.setType(true);
-                    return true;
-            }
-            return false;
-        });
 
     }
-    public Fragment getForegroundFragment(){
-        Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_drawer);
-        return navHostFragment == null ? null : navHostFragment.getChildFragmentManager().getFragments().get(0);
-    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -134,7 +113,7 @@ public class DrawerActivity extends AppCompatActivity {
                     navController.navigate(R.id.advancedSearchFragment);
                     return true;
                 default:
-                    NavigationUI.onNavDestinationSelected(item,navController);
+                NavigationUI.onNavDestinationSelected(item,navController);
             }
         }
         else{
@@ -154,9 +133,5 @@ public class DrawerActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_drawer);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
-    }
-
-    public void onClickAdd(View view) {
-        navController.navigate(HomeFragmentDirections.actionNavHomeToAddPostTypeSelectFragment());
     }
 }

@@ -289,6 +289,7 @@ public class AdvancedSearchFragment extends Fragment {
                         if(posts == null || posts.isEmpty())
                         {
                             Toast.makeText(MyApplication.context, "0 posts found", Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
                             return;
                         }
                         Navigation.findNavController(view).navigate(SearchPostsFragmentDirections.actionGlobalSearchPostsFragment(posts.toArray(new Post[0])));

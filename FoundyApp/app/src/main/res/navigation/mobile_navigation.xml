@@ -88,4 +88,9 @@
         android:name="com.example.foundyapp.ui.myposts.EditPostFragment"
         android:label="fragment_edit_post"
         tools:layout="@layout/fragment_edit_post" />
+    <fragment
+        android:id="@+id/startFragment"
+        android:name="com.example.foundyapp.StartFragment"
+        android:label="fragment_start"
+        tools:layout="@layout/fragment_start" />
 </navigation>
