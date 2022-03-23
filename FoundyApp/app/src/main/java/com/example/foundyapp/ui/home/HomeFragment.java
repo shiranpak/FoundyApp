@@ -169,7 +169,7 @@ public class HomeFragment extends Fragment {
                 holder.itemView.setVisibility(View.VISIBLE);
                 holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams)
-                holder.itemView.getLayoutParams();
+                        holder.itemView.getLayoutParams();
                 layoutParams.setMargins(30, 20, 30, 10);
                 holder.itemView.setLayoutParams(layoutParams);
             }
@@ -212,6 +212,7 @@ public class HomeFragment extends Fragment {
             userName = itemView.findViewById(R.id.post_username_textview);
             postImage=itemView.findViewById(R.id.post_imageview);
             contactBtn = itemView.findViewById(R.id.post_contact_imageButton);
+            contactBtn.setVisibility(View.VISIBLE);
             contactBtn.setOnClickListener(new View.OnClickListener(){
 
                 @Override
@@ -233,9 +234,17 @@ public class HomeFragment extends Fragment {
             user.observe(getViewLifecycleOwner(),liveDataUser -> {
                 userName.setText(liveDataUser.getFullName());
                 contactInfo.setText(liveDataUser.getEmail());
-                Picasso.get()
-                        .load(user.getValue().getImage())
-                        .into(userProfileImage);
+                if(user.getValue().getImage()!=null) {
+                    Picasso.get()
+                            .load(user.getValue().getImage())
+                            .into(userProfileImage);
+                }
+                else
+                {
+                    Picasso.get()
+                            .load(R.drawable.fui_ic_anonymous_white_24dp)
+                            .into(userProfileImage);
+                }
             });
 
             if (post.getImageUrl() != null) {

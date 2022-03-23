@@ -99,12 +99,19 @@ public class ModelFirebase {
 
     public void editPost(Post post)
     {
-            DocumentReference p=db.collection(Post.COLLECTION_NAME).document(post.getPostId());
-                p.update("category", post.getCategory(),
-                        "description", post.getDescription(),
-                       "imageUrl",post.getImageUrl(),
-                        "title",post.getTitle(),
-                        "lastUpdated",post.getLastUpdated());
+        if (post.getImageUrl()!=null) {
+            DocumentReference p = db.collection(Post.COLLECTION_NAME).document(post.getPostId());
+            p.update("category", post.getCategory(),
+                    "description", post.getDescription(),
+                    "imageUrl", post.getImageUrl(),
+                    "title", post.getTitle());
+        }
+        else{
+            DocumentReference p = db.collection(Post.COLLECTION_NAME).document(post.getPostId());
+            p.update("category", post.getCategory(),
+                    "description", post.getDescription(),
+                    "title", post.getTitle());
+        }
 
     }
 
