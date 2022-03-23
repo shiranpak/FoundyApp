@@ -37,6 +37,7 @@ public class ModelFirebase {
     FirebaseUser firebaseUser;
     User user;
 
+
     public ModelFirebase(){
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(false)
@@ -100,6 +101,11 @@ public class ModelFirebase {
         void onComplete(List<Post> list);
     }
 
+    public void deletePost (String postId , Model.deletePostListener listener){
+        DocumentReference post = db.collection(Post.COLLECTION_NAME).document(postId);
+        post.update("isDeleted", true);
+    }
+
     public void getAllPosts(Long lastUpdateDate, GetAllPostsListener listener) {
 
         db.collection(Post.COLLECTION_NAME)
@@ -110,11 +116,12 @@ public class ModelFirebase {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             Post post = Post.create(doc.getId(), doc.getData());
-                            if (post != null) {
+                            if (post != null && post.getIsDeleted()) {
                                 list.add(post);
                             }
                         }
                     }
+
                     listener.onComplete(list);
                 }).addOnFailureListener(e -> listener.onComplete(null));
     }
@@ -266,6 +273,11 @@ public class ModelFirebase {
         }
         else return false;
     }
+
+public void SignOut(Model.signOutUserListener listener){
+        mAuth.signOut();
+    }
+
 
     public void getCurrentUser(Model.GetUserById listener){
         if (checkIfLoggedIn()) {

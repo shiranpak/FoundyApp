@@ -1,19 +1,26 @@
 package com.example.foundyapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.ModelFirebase;
+import com.example.foundyapp.model.PicassoCircleTransformation;
+import com.example.foundyapp.model.User;
 import com.example.foundyapp.model.UserSession;
 import com.example.foundyapp.ui.home.HomeFragment;
 import com.example.foundyapp.ui.home.HomeFragmentDirections;
+import com.example.foundyapp.ui.login.LoginActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -22,17 +29,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.foundyapp.databinding.ActivityDrawerBinding;
+import com.squareup.picasso.Picasso;
 
 public class DrawerActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityDrawerBinding binding;
     private NavController navController;
-    private CurvedBottomNavigationView curvedBottomNavigationView;
-    private FloatingActionButton addPostBtn;
     UserSession session;
-    ModelFirebase db;
-    private HomeFragment home;
     TextView name_drawer,email_drawer;
 
 
@@ -41,7 +45,6 @@ public class DrawerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         session = new UserSession(getApplicationContext());
-        db=new ModelFirebase();
         binding = ActivityDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarDrawer.toolbar);
@@ -60,12 +63,15 @@ public class DrawerActivity extends AppCompatActivity {
 
 
         //create login session
-        session.checkLogin();
-        //logout from app TOdo:create listener that checks if user looged in
-        db.checkIfLoggedIn();
-        navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(item -> {
-            session.logoutUser();
+        if (session.checkLogin())
+        {
+            finish();
+        }
 
+        navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(item -> {
+            Model.instance.signOutFirebase(()->{});
+            session.logoutUser();
+            finish();
             return true;
         });
 
@@ -73,28 +79,17 @@ public class DrawerActivity extends AppCompatActivity {
         View header=navigationView.getHeaderView(0);
         name_drawer=(TextView) header.findViewById(R.id.nameDrawer);
         email_drawer=(TextView) header.findViewById(R.id.emailText);
-        /*Model.instance.getUser(new Model.GetUserByMail() {
+        ImageView avatar = header.findViewById(R.id.headerImage);
+        Model.instance.getUser(new Model.GetUserById(){
             @Override
             public void onComplete(User user) {
                 name_drawer.setText(user.getFullName());
                 email_drawer.setText(user.getEmail());
+                Picasso.get().load(user.getImage()).transform(new PicassoCircleTransformation()).into(avatar);
             }
-        });*/
-
-
-        curvedBottomNavigationView = (CurvedBottomNavigationView)findViewById(R.id.bottom_navigation);
-        curvedBottomNavigationView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.bottom_nav_losts_btn:
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.container, firstFragment).commit();
-                    return true;
-
-                case R.id.bottom_nav_findings_btn:
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.container, thirdFragment).commit();
-                    return true;
-            }
-            return false;
         });
+
+
 
     }
 
@@ -113,15 +108,12 @@ public class DrawerActivity extends AppCompatActivity {
 
                 case R.id.search_by_place_btn:
                     navController.navigate(R.id.searchByPlaceFragment);
-//                    search_btn.setVisible(false);
                     return true;
                 case R.id.advanced_search_btn:
                     navController.navigate(R.id.advancedSearchFragment);
-//                    search_btn.setVisible(false);
                     return true;
                 default:
-//                    search_btn.setVisible(true);
-                    NavigationUI.onNavDestinationSelected(item,navController);
+                NavigationUI.onNavDestinationSelected(item,navController);
             }
         }
         else{
@@ -141,9 +133,5 @@ public class DrawerActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_drawer);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
-    }
-
-    public void onClickAdd(View view) {
-        navController.navigate(HomeFragmentDirections.actionNavHomeToAddPostTypeSelectFragment());
     }
 }

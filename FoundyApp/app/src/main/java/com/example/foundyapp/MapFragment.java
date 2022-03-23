@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
@@ -54,7 +55,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MapFragment extends Fragment  {
     FirebaseFirestore db;
@@ -98,7 +101,7 @@ public class MapFragment extends Fragment  {
     private List<Marker> lostMarkers = new ArrayList<>(), foundMarkers=new ArrayList<>();
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
-
+    Map<Marker, Post> dictionary_Marker_Post = new HashMap<Marker, Post>();
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -144,6 +147,8 @@ public class MapFragment extends Fragment  {
         }
 
         map.setOnInfoWindowClickListener(marker -> {
+            Post post = dictionary_Marker_Post.get(marker);
+            Navigation.findNavController(getView()).navigate(SearchPostsFragmentDirections.actionGlobalSearchPostsFragment((new Post[]{post})));
 
         });
         placesClient = Places.createClient(getActivity());
@@ -196,6 +201,7 @@ public class MapFragment extends Fragment  {
                                 marker.setVisible(false);
                                 marker.hideInfoWindow();
                             }
+                            dictionary_Marker_Post.put(marker,post);
                         }
                     }
                     if(foundMarkers.size() > 0) {

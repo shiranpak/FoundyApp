@@ -295,6 +295,7 @@ public class AddPostFragment extends Fragment {
             });
         } else {
             getLocationPermission();
+            progressBar.setVisibility(View.GONE);
         }
     }
     /**

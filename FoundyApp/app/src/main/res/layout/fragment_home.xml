@@ -47,7 +47,6 @@
         android:contentDescription="add"
         android:scaleType="center"
         android:src="@drawable/ic_add_black_24dp"
-        android:onClick="onClickAdd"
         app:backgroundTint="@color/quantum_yellow300"
         app:elevation="9dp"
         app:fabCustomSize="80dp"

@@ -165,7 +165,25 @@ public class MyPostsFragment extends Fragment {
                         .load(post.getImageUrl())
                         .into(postPicture);
             }
+
+            edit.setOnClickListener((v)->{
+
+
+            });
+
+            delete.setOnClickListener((v)-> {
+                post.setIsDeleted(true);
+                Model.instance.deletePost(post.getPostId(), new Model.deletePostListener() {
+                    @Override
+                    public void onComplete() {
+                        Model.instance.refreshPostsList();
+                    }
+                });
+            });
         }
+
+
+
     }
 
 
