@@ -93,7 +93,7 @@ public class AddPostFragment extends Fragment {
     private AutocompleteSupportFragment autocompleteFragment;
     private boolean postType;
     Bitmap imageBitmap = null;
-    // TODO: Rename and change types of parameters
+
     private String mParam1;
     private String mParam2;
     private LiveData<User> currentUser;
@@ -102,15 +102,6 @@ public class AddPostFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddPostFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static AddPostFragment newInstance(String param1, String param2) {
         AddPostFragment fragment = new AddPostFragment();
         Bundle args = new Bundle();
@@ -140,7 +131,7 @@ public class AddPostFragment extends Fragment {
         saveBtn = view.findViewById(R.id.add_submitBtn);
         saveBtn.setOnClickListener(v -> savePost());
 
-        nameTextView = view.findViewById(R.id.add_item_title_tf);
+        nameTextView = view.findViewById(R.id.edit_item_title_tf);
         descriptionTextView = view.findViewById(R.id.edit_desc_text);
 
         postType = AddPostFragmentArgs.fromBundle(getArguments()).getPostType();

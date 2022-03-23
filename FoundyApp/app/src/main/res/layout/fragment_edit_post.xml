@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/add_item_title_tf"
+            android:id="@+id/edit_item_title_tf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -119,13 +119,6 @@
             android:lines="2"
             android:maxLines="3" />
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/edit_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="20dp"
-            android:indeterminate="true"
-            app:indicatorSize="80dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -136,7 +129,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="52dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:text="save"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.804"
         app:layout_constraintStart_toStartOf="parent"
@@ -150,7 +145,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="52dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:text="cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.199"
         app:layout_constraintStart_toStartOf="parent"
@@ -189,9 +186,22 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:text="Edit Post"
-        android:textSize="50dp"
+        android:textSize="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/edit_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:elevation="20dp"
+        android:indeterminate="true"
+        app:indicatorSize="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

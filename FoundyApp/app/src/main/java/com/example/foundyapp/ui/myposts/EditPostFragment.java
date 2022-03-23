@@ -10,12 +10,15 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 
 import com.example.foundyapp.R;
+import com.example.foundyapp.model.Category;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
 import com.google.android.gms.maps.model.LatLng;
@@ -24,6 +27,9 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,16 +44,16 @@ public class EditPostFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
     private String mParam2;
+
+
+    List<Category> categoriesList;
     ProgressBar progressBar;
     Bitmap imageBitmap = null;
     private Button saveBtn;
     private Button cancelBtn;
-    private LatLng selectedLocation;
     private Long selectedDate;
-    private PlacesClient placesClient;
     private ImageView itemImage;
     private Switch useMyLocation;
-    AutocompleteSupportFragment autocompleteFragment;
     TextInputLayout dateTextLayout;
     TextInputEditText dateTextView, nameTextView, descriptionTextView;
     public EditPostFragment() {// Required empty public constructor
@@ -73,38 +79,53 @@ public class EditPostFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_post, container, false);
         String pid = EditPostFragmentArgs.fromBundle(getArguments()).getPostid();
+
+        //dateTextView=view.findViewById(R.id.add_date_select);
+        nameTextView=view.findViewById(R.id.edit_item_title_tf);
+        itemImage=view.findViewById(R.id.edit_image_upload);
+        descriptionTextView=view.findViewById(R.id.edit_desc_text);
         progressBar = view.findViewById(R.id.edit_progress);
         saveBtn = view.findViewById(R.id.edit_submitBtn);
         cancelBtn = view.findViewById(R.id.edit_cancelBtn);
-        cancelBtn.setOnClickListener(v->
-               Navigation.findNavController(v).navigate(EditPostFragmentDirections.actionEditPostFragmentToNavGallery()));
-        saveBtn.setOnClickListener(v -> savePost());
 
 
-        Context mContext = getActivity();
-        if (!Places.isInitialized()) {
-            Places.initialize(mContext, getString(R.string.api_key));
-        }
-        placesClient = Places.createClient(getActivity());
-        useMyLocation = (Switch) view.getRootView().findViewById(R.id.add_my_location_switch);
-        useMyLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked == true) {
+        Model.instance.getCategories(list -> {
+            if (!list.isEmpty()) {
+                //Categories
+                categoriesList = (List<Category>) list;
 
+                String[] categoriesListArr = new String[categoriesList.size()];
+                for (int i = 0; i < categoriesList.size(); i++)
+                    categoriesListArr[i] = categoriesList.get(i).getName();
+
+                AutoCompleteTextView categoriesTextView = (AutoCompleteTextView) view.findViewById(R.id.category_selection_dp);
+
+                ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_dropdown_item_1line, categoriesListArr);
+
+                categoriesTextView.setAdapter(categoriesAdapter);
             }
+            progressBar.setVisibility(View.GONE);
         });
-
-     autocompleteFragment = (AutocompleteSupportFragment)
-                getChildFragmentManager().findFragmentById(R.id.add_select_place_autocomplete_fragment);
-
 
         Model.instance.getPostById(pid, new Model.getPostByIdListener() {
             @Override
             public void onComplete(Post post) {
+                nameTextView.setText(post.getTitle());
+                descriptionTextView.setText(post.getDescription());
+                Picasso.get().load(post.getImageUrl()).
+                        error(R.drawable.icons8_edit_image_127px_3).
+                        into(itemImage);
+                //dateTextView.setText(post.getFormattedDate());
 
             }
         });
 
-
+       //default post object
+        Post p = null;
+        cancelBtn.setOnClickListener(v->
+                Navigation.findNavController(v).navigate(EditPostFragmentDirections.actionEditPostFragmentToNavGallery()));
+        saveBtn.setOnClickListener(v -> savePost(p));
 
 
         return  view;
@@ -112,7 +133,9 @@ public class EditPostFragment extends Fragment {
     }
 
 
-    private void savePost() {
+    private void savePost(Post post) {
+
+
 
 
 
