@@ -40,6 +40,7 @@ public class Post {
     private String description;
     private boolean type; //true = found, false = lost
     private String userId;
+
     private boolean isDeleted = false;
     private String imageUrl;
     private Long lastUpdated = new Long(0);

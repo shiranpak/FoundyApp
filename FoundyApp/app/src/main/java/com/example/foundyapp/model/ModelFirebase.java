@@ -44,6 +44,10 @@ public class ModelFirebase {
         db.setFirestoreSettings(settings);
     }
 
+    public String getUid(){
+        return firebaseUser.getUid();
+    }
+
     public void getAllCategories(Model.GetAllDataListener listener) {
         db.collection(Category.COLLECTION_NAME)
                 .get()
@@ -100,6 +104,26 @@ public class ModelFirebase {
 
         db.collection(Post.COLLECTION_NAME)
            //     .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(lastUpdateDate, 0))
+                .get()
+                .addOnCompleteListener(task -> {
+                    List<Post> list = new LinkedList<>();
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            Post post = Post.create(doc.getId(), doc.getData());
+                            if (post != null) {
+                                list.add(post);
+                            }
+                        }
+                    }
+                    listener.onComplete(list);
+                }).addOnFailureListener(e -> listener.onComplete(null));
+    }
+
+    public void getCurrentUserPosts(String userId, Long lastUpdateDate, GetAllPostsListener listener) {
+
+        db.collection(Post.COLLECTION_NAME)
+                //     .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(lastUpdateDate, 0))
+                .whereEqualTo("user",userId)
                 .get()
                 .addOnCompleteListener(task -> {
                     List<Post> list = new LinkedList<>();
@@ -243,8 +267,7 @@ public class ModelFirebase {
         else return false;
     }
 
-
-    public void getUser(Model.GetUserById listener){
+    public void getCurrentUser(Model.GetUserById listener){
         if (checkIfLoggedIn()) {
             db.collection(user.CollectionName).document(firebaseUser.getUid()).get().addOnCompleteListener(task -> {
                 User user = null;
@@ -256,6 +279,4 @@ public class ModelFirebase {
         }
 
     }
-
-
 }

@@ -1,6 +1,7 @@
 package com.example.foundyapp.ui.myposts;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,47 +20,50 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.foundyapp.R;
-import com.example.foundyapp.databinding.FragmentGalleryBinding;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
+import com.example.foundyapp.model.User;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class GalleryFragment extends Fragment {
+public class MyPostsFragment extends Fragment {
 
-    private FragmentGalleryBinding binding;
     SwipeRefreshLayout swipeRefresh;
     MyRecyclerViewAdapter adapter;
-    GalleryViewModel galleryViewModel;
+    MyPostsViewModel myPostsViewModel;
     List<Post> myPosts;
+    User currentUser;
 
-    public GalleryFragment() {
+    public MyPostsFragment() {
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        galleryViewModel = new ViewModelProvider(this).get(GalleryViewModel.class);
+        myPostsViewModel = new ViewModelProvider(this).get(MyPostsViewModel.class);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                new ViewModelProvider(this).get(GalleryViewModel.class);
+        myPostsViewModel =
+                new ViewModelProvider(this).get(MyPostsViewModel.class);
 
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_gallery,container,false);
         RecyclerView rv = view.findViewById(R.id.my_posts_rv);
         swipeRefresh = view.findViewById(R.id.myposts_swiperefresh);
-        swipeRefresh.setOnRefreshListener(() -> Model.instance.refreshPostsList());
+        swipeRefresh.setOnRefreshListener(() -> Model.instance.refreshMyPostsList());
 
-        myPosts = galleryViewModel.getData().getValue();
-        adapter = new MyRecyclerViewAdapter(myPosts);
+        myPosts = myPostsViewModel.getMyPosts().getValue();
+        adapter = new MyRecyclerViewAdapter();
         adapter.notifyDataSetChanged();
         rv.setLayoutManager(new LinearLayoutManager(this.getContext()));
         rv.setAdapter(adapter);
 
-        galleryViewModel.getData().observe(getViewLifecycleOwner(), list1 -> refreshPostList());
+        myPostsViewModel.getMyPosts().observe(getViewLifecycleOwner(), list1 -> refreshMyPostList());
         swipeRefresh.setRefreshing(Model.instance.getPostListLoadingState().getValue() == Model.ListLoadingState.loading);
         Model.instance.getPostListLoadingState().observe(getViewLifecycleOwner(), postListLoadingState -> {
             if (postListLoadingState == Model.ListLoadingState.loading){
@@ -65,29 +71,29 @@ public class GalleryFragment extends Fragment {
             }else{
                 swipeRefresh.setRefreshing(false);
             }
-
         });
-
         return view;
     }
 
-    private void refreshPostList() {
+    private void refreshMyPostList() {
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshMyPostList();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
     }
 
     private class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
-        private Context context;
-        private List<Post> myPostslist;
 
-        public MyRecyclerViewAdapter(List<Post> list) {
-            this.myPostslist = list;
+        public MyRecyclerViewAdapter() {
         }
 
         @NonNull
@@ -100,17 +106,16 @@ public class GalleryFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            Post post = galleryViewModel.getData().getValue().get(position);
+            Post post = myPostsViewModel.getMyPosts().getValue().get(position);
             holder.bind(post);
         }
 
-
         @Override
         public int getItemCount() {
-            if(galleryViewModel.getData().getValue() == null){
+            if(myPostsViewModel.getMyPosts().getValue() == null){
                 return 0;
             }
-            return galleryViewModel.getData().getValue().size();
+            return myPostsViewModel.getMyPosts().getValue().size();
         }
     }
 
@@ -121,6 +126,7 @@ public class GalleryFragment extends Fragment {
         TextView category;
         TextView description;
         TextView userName;
+        ImageView userProfileImage;
         ImageButton edit;
         ImageButton delete;
         ImageView postPicture;
@@ -133,6 +139,7 @@ public class GalleryFragment extends Fragment {
             category = itemView.findViewById(R.id.post_category_input_tv);
             description = itemView.findViewById(R.id.post_description_input_tv);
             userName = itemView.findViewById(R.id.post_username_textview);
+            userProfileImage = itemView.findViewById(R.id.post_userprofile_imageview);
             edit =  itemView.findViewById(R.id.post_edit);
             delete =  itemView.findViewById(R.id.post_delete);
             postPicture=itemView.findViewById(R.id.post_imageview);
@@ -144,6 +151,11 @@ public class GalleryFragment extends Fragment {
             category.setText(post.getCategory());
             description.setText(post.getDescription());
             userName.setText(post.getUserId());
+            /*if (currentUser.getImage() != null) {
+                Picasso.get()
+                        .load(currentUser.getImage())
+                        .into(userProfileImage);
+            }*/
             edit.setVisibility(View.VISIBLE);
             edit.setClickable(true);
             delete.setVisibility(View.VISIBLE);
