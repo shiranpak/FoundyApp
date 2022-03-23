@@ -170,6 +170,7 @@ public class HomeFragment extends Fragment {
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
+        TextView title;
         TextView date;
         TextView location;
         TextView category;
@@ -177,9 +178,12 @@ public class HomeFragment extends Fragment {
         TextView userName;
         ImageView userProfileImage;
         ImageView postImage;
+        ImageButton contactBtn;
+        TextView contactInfo;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
+            title = itemView.findViewById(R.id.post_title_input_tv);
             date = itemView.findViewById(R.id.post_date_input_tv);
             location = itemView.findViewById(R.id.post_location_input_tv);
             category = itemView.findViewById(R.id.post_category_input_tv);
@@ -187,19 +191,34 @@ public class HomeFragment extends Fragment {
             userProfileImage = itemView.findViewById(R.id.post_userprofile_imageview);
             userName = itemView.findViewById(R.id.post_username_textview);
             postImage=itemView.findViewById(R.id.post_imageview);
+            contactBtn = itemView.findViewById(R.id.post_contact_imageButton);
+            contactBtn.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+                    contactInfo.setVisibility(View.VISIBLE);
+                }
+            } );
+            contactInfo = itemView.findViewById(R.id.post_contact_info_tv);
 
         }
 
         public void bind(Post post){
+            title.setText(post.getTitle());
             date.setText(post.getFormattedDate());
             location.setText(post.getAddress());
             category.setText(post.getCategory());
             description.setText(post.getDescription());
             LiveData<User> user = Model.instance.getUser(post.getUserId());
             user.observe(getViewLifecycleOwner(),liveDataUser -> {
-                Log.d("test",liveDataUser.getFullName());
                 userName.setText(liveDataUser.getFullName());
+                contactInfo.setText(liveDataUser.getEmail());
             });
+            if (user.getValue().getImage() != null) {
+                Picasso.get()
+                        .load(user.getValue().getImage())
+                        .into(userProfileImage);
+            }
 
             if (post.getImageUrl() != null) {
                 Picasso.get()

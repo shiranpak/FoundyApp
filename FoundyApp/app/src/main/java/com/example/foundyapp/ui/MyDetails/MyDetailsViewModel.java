@@ -16,13 +16,14 @@ public class MyDetailsViewModel extends ViewModel {
         fullName = new MutableLiveData<>();
         email = new MutableLiveData<>();
         image = new MutableLiveData<>();
-        /*Model.instance.getCurrentUser(user -> {
-            fullName.setValue(user.getFullName());
-            email.setValue(user.getEmail());
-            if (user.getImage()!=null){
-                image.setValue(user.getImage());
+
+
+            fullName.setValue(Model.instance.getCurrentUser().getValue().getFullName());
+            email.setValue(Model.instance.getCurrentUser().getValue().getEmail());
+            String imageUrl = Model.instance.getCurrentUser().getValue().getImage();
+            if (imageUrl!=null){
+                image.setValue(imageUrl);
             }
-        });*/
     }
 
     public LiveData<String> getFullName() { return fullName;}

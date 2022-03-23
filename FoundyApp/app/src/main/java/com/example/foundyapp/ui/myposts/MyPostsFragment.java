@@ -129,6 +129,7 @@ public class MyPostsFragment extends Fragment {
         ImageButton edit;
         ImageButton delete;
         ImageView postPicture;
+        ImageButton contact;
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -142,6 +143,7 @@ public class MyPostsFragment extends Fragment {
             edit =  itemView.findViewById(R.id.post_edit);
             delete =  itemView.findViewById(R.id.post_delete);
             postPicture=itemView.findViewById(R.id.post_imageview);
+            contact = itemView.findViewById(R.id.post_contact_imageButton);
         }
 
         public void bind(Post post){
@@ -154,11 +156,12 @@ public class MyPostsFragment extends Fragment {
 
             //if(currentUser!=null){
             userName.setText(currentUser!=null? currentUser.getFullName(): "");
-            /*if (currentUser.getImage() != null) {
+
+            if (currentUser.getImage() != null) {
                 Picasso.get()
                         .load(currentUser.getImage())
                         .into(userProfileImage);
-            }*/
+            }
             edit.setVisibility(View.VISIBLE);
             edit.setClickable(true);
             delete.setVisibility(View.VISIBLE);
