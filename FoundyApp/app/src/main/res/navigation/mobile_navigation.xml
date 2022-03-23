@@ -56,7 +56,7 @@
     <fragment
         android:id="@+id/addPostFragment"
         android:name="com.example.foundyapp.AddPostFragment"
-        android:label="fragment_add_post"
+        android:label="Add Post"
         tools:layout="@layout/fragment_add_post">
         <argument
             android:name="postType"
@@ -65,7 +65,7 @@
     <fragment
         android:id="@+id/edit_user_Fragment"
         android:name="com.example.foundyapp.ui.MyDetails.Edit_user_Fragment"
-        android:label="Edit_user_Fragment" >
+        android:label="Edit User">
         <action
             android:id="@+id/action_edit_user_Fragment_to_MyDetailsFragment"
             app:destination="@id/MyDetailsFragment" />
@@ -73,8 +73,8 @@
     <fragment
         android:id="@+id/searchPostsFragment"
         android:name="com.example.foundyapp.SearchPostsFragment"
-        android:label="fragment_search_posts"
-        tools:layout="@layout/fragment_search_posts" >
+        android:label="Posts Found"
+        tools:layout="@layout/fragment_search_posts">
         <argument
             android:name="postsArg"
             app:argType="com.example.foundyapp.model.Post[]"
@@ -86,8 +86,8 @@
     <fragment
         android:id="@+id/editPostFragment"
         android:name="com.example.foundyapp.ui.myposts.EditPostFragment"
-        android:label="fragment_edit_post"
-        tools:layout="@layout/fragment_edit_post" >
+        android:label="Edit Post"
+        tools:layout="@layout/fragment_edit_post">
         <argument
             android:name="postid"
             app:argType="string" />
