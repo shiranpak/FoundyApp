@@ -130,11 +130,13 @@ public class MyPostsFragment extends Fragment {
         ImageButton edit;
         ImageButton delete;
         ImageView postPicture;
-        ImageButton contact;
-
+        TextView title;
+        ImageView contact;
+        TextView contactInfo;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
+            title = itemView.findViewById(R.id.post_title_input_tv);
             date = itemView.findViewById(R.id.post_date_input_tv);
             location = itemView.findViewById(R.id.post_location_input_tv);
             category = itemView.findViewById(R.id.post_category_input_tv);
@@ -145,17 +147,23 @@ public class MyPostsFragment extends Fragment {
             delete =  itemView.findViewById(R.id.post_delete);
             postPicture=itemView.findViewById(R.id.post_imageview);
             contact = itemView.findViewById(R.id.post_contact_imageButton);
+            contactInfo = itemView.findViewById(R.id.post_contact_info_tv);
         }
 
         public void bind(Post post){
 
+            title.setText(post.getTitle());
             currentUser = myPostsViewModel.getCurrentUser().getValue();
             date.setText(post.getFormattedDate());
             location.setText(post.getAddress());
             category.setText(post.getCategory());
             description.setText(post.getDescription());
 
+
             userName.setText(currentUser!=null? currentUser.getFullName(): "");
+
+            contactInfo.setVisibility(View.INVISIBLE);
+            contact.setVisibility(View.INVISIBLE);
 
             if (currentUser.getImage() != null) {
                 Picasso.get()
