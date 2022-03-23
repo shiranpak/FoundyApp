@@ -20,8 +20,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_item_title_tf"
+        <EditText
+            android:id="@+id/editP_item_title_tf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -47,7 +47,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView
-        android:id="@+id/edit_image_upload"
+        android:id="@+id/editP_image_upload"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/icons8_edit_image_127px_3"
@@ -70,9 +70,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_category_list">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_desc_text"
-            android:layout_width="350dp"
+        <EditText
+            android:id="@+id/editP_desc_text"
+            android:layout_width="372dp"
             android:layout_height="130dp"
             android:gravity="top|left"
             android:inputType="textMultiLine"
@@ -128,7 +128,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/edit_progress"
+        android:id="@+id/editP_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
