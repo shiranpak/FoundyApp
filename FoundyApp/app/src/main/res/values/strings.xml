@@ -34,11 +34,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- home fragment strings -->
-    <string name="post_category_tv">Category</string>
-    <string name="post_date_tv">Date</string>
-    <string name="post_location_tv">Location</string>
-    <string name="post_description_tv">Description</string>
-    <string name="post_username_textview">username</string>
+    <string name="post_category_tv">Category:</string>
+    <string name="post_date_tv">Date:</string>
+    <string name="post_location_tv">Location:</string>
+    <string name="post_description_tv">Description:</string>
+    <string name="post_username_textview">username:</string>
     <string name="dialog_congratulations_title">Congratulations</string>
     <string name="dialog_congratulations_summary">The post uploaded successfully</string>
 
