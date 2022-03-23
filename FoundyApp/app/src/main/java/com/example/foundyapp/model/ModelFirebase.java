@@ -127,8 +127,8 @@ public class ModelFirebase {
         db.collection(Post.COLLECTION_NAME)
                 .document()
                 .set(json)
-                .addOnSuccessListener(unused -> listener.onComplete())
-                .addOnFailureListener(e -> listener.onComplete());
+                .addOnSuccessListener(unused -> listener.onComplete(true))
+                .addOnFailureListener(e -> listener.onComplete(false));
     }
     /**
      * Firebase Storage

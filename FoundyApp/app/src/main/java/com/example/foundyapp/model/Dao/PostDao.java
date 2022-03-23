@@ -17,6 +17,9 @@ public interface PostDao {
     @Query("select * from posts")
     List<Post> GetAllPosts();
 
+    @Query("select * from posts where `userId` = :userId")
+    List<Post> GetCurrentUserPosts(String userId);
+
     @Query("select * from posts where `isDeleted` = 0")
     List<Post> GetAllActivePosts();
 

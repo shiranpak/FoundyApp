@@ -34,6 +34,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.example.foundyapp.model.Category;
 import com.example.foundyapp.model.City;
@@ -280,7 +281,7 @@ public class AddPostFragment extends Fragment {
                     Exception exception = task.getException();
                     if (exception instanceof ApiException) {
                         ApiException apiException = (ApiException) exception;
-                        Log.e("TAG", "Place not found: " + apiException.getStatusCode());
+                        Toast.makeText(MyApplication.context, "Place not found, Try Again", Toast.LENGTH_LONG).show();
                     }
                     progressBar.setVisibility(View.GONE);
                 }
