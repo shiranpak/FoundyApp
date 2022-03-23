@@ -1,7 +1,6 @@
 package com.example.foundyapp.ui.home;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.foundyapp.model.Model;
