@@ -107,16 +107,15 @@ public class ModelFirebase {
     }
 
     public void getAllPosts(Long lastUpdateDate, GetAllPostsListener listener) {
-
         db.collection(Post.COLLECTION_NAME)
-           //     .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(lastUpdateDate, 0))
+                .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(lastUpdateDate, 0))
                 .get()
                 .addOnCompleteListener(task -> {
                     List<Post> list = new LinkedList<>();
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             Post post = Post.create(doc.getId(), doc.getData());
-                            if (post != null && post.getIsDeleted()) {
+                            if (post != null) {
                                 list.add(post);
                             }
                         }
@@ -151,8 +150,8 @@ public class ModelFirebase {
         db.collection(Post.COLLECTION_NAME)
                 .document()
                 .set(json)
-                .addOnSuccessListener(unused -> listener.onComplete(true))
-                .addOnFailureListener(e -> listener.onComplete(false));
+                .addOnSuccessListener(unused -> listener.onComplete())
+                .addOnFailureListener(e -> listener.onComplete());
     }
     /**
      * Firebase Storage

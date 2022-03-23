@@ -260,6 +260,7 @@ public class Post implements Parcelable {
         Post post = new Post(id, title,category,location,date,description,type,user,isDeleted,lastUpdated);
         post.setImageUrl(imageUrl);
         post.setAddressFromLocation(location);
+        post.setIsDeleted(isDeleted);
         return post;
     }
 

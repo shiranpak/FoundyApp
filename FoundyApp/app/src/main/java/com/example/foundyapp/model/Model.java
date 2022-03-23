@@ -26,7 +26,10 @@ import java.util.stream.Collectors;
 
 public class Model {
 
-    private Model(){}
+    private Model(){
+        postListLoadingState.setValue(ListLoadingState.loaded);
+        refreshPostsList();
+    }
     public static final Model instance = new Model();
     public Executor executor = Executors.newFixedThreadPool(1);
     public Handler mainThread = HandlerCompat.createAsync(Looper.getMainLooper());
@@ -94,9 +97,6 @@ public class Model {
     MutableLiveData<List<Post>> currentUserPostList = new MutableLiveData<List<Post>>();
 
     public LiveData<List<Post>> getAllPosts() {
-        if (postsList.getValue() == null) {
-            refreshPostsList();
-        }
         return postsList;
     }
     public interface searchForPostsListener{

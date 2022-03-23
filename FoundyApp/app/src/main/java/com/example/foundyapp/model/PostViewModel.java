@@ -8,12 +8,8 @@ import com.example.foundyapp.model.Dao.PostDao;
 import java.util.List;
 
 public class PostViewModel extends ViewModel {
-
-    LiveData<List<Post>> data;
-
-    public PostViewModel(){
-        data = Model.instance.getAllPosts();
-    }
+    LiveData<List<Post>> data = Model.instance.getAllPosts();
     public LiveData<List<Post>> getData() {
         return data;
-    }}
+    }
+}

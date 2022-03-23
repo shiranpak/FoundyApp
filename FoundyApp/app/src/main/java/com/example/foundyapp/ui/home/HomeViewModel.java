@@ -11,13 +11,8 @@ import java.util.List;
 
 public class HomeViewModel extends ViewModel {
 
-    LiveData<List<Post>> data;
-
-    public HomeViewModel(){
-        data = Model.instance.getAllPosts();
-    }
-
+    LiveData<List<Post>> posts = Model.instance.getAllPosts();
     public LiveData<List<Post>> getData() {
-        return data;
+        return posts;
     }
 }
