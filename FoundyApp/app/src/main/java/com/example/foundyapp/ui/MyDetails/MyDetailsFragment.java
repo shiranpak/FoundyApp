@@ -16,6 +16,7 @@ import androidx.navigation.Navigation;
 
 import com.example.foundyapp.R;
 import com.example.foundyapp.databinding.FragmentMydetailsBinding;
+import com.example.foundyapp.model.Model;
 import com.squareup.picasso.Picasso;
 
 public class MyDetailsFragment extends Fragment {
@@ -34,9 +35,11 @@ public class MyDetailsFragment extends Fragment {
         final TextView email = binding.etEmail;
         final ImageView avatar = binding.uiDetails;
         final String url;
+
         myDetailsViewModel.getFullName().observe(getViewLifecycleOwner(), (fullName::setText));
         myDetailsViewModel.getEmail().observe(getViewLifecycleOwner(), (email::setText));
-        Picasso.get().load(myDetailsViewModel.getImage().getValue()).error(R.drawable.icon_user).into(avatar);
+        myDetailsViewModel.getImage().observe(getViewLifecycleOwner(), imageUrl ->
+        Picasso.get().load(imageUrl).error(R.drawable.icon_user).into(avatar));
         edit_btn = binding.editBtn;
         edit_btn.setOnClickListener((v)-> Navigation.findNavController(v).navigate(MyDetailsFragmentDirections.actionMyDetailsFragmentToEditUserFragment()));
 

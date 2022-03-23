@@ -7,6 +7,7 @@ import android.location.Geocoder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Display;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.os.HandlerCompat;
@@ -45,6 +46,8 @@ public class Model {
         modelFirebase.loginUser(email,password,applicationContext);
     }
 
+
+
     public interface GetAllDataListener{
         void onComplete(List<?> list);
     }
@@ -59,6 +62,9 @@ public class Model {
     }
     public interface logInUserListener{
         void onComplete();
+    }
+    public interface getPostByIdListener{
+        void onComplete(Post post);
     }
 
     public void getAllData(GetAllDataListener listener){
@@ -286,4 +292,7 @@ public class Model {
     public void signOutFirebase (signOutUserListener listener) { modelFirebase.SignOut(listener); }
     public boolean loginCheck(){return modelFirebase.checkIfLoggedIn();}
     public void deletePost(String postId,deletePostListener listener){modelFirebase.deletePost(postId,listener);}
+    public void editMyPost(Post post){modelFirebase.editPost(post);}
+    public void getPostById(String postId, getPostByIdListener listener){ modelFirebase.getPostById(postId,listener);}
+
 }

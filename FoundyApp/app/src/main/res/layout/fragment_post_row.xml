@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
+    android:id="@+id/post_title_tv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="10dp"
@@ -14,6 +14,19 @@
     android:focusable="true"
     tools:context="ui.home.HomeFragment">
 
+
+    <TextView
+        android:id="@+id/post_contact_info_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="15dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/post_imageview"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/post_contact_imageButton"
+        app:layout_constraintTop_toTopOf="@+id/post_contact_imageButton" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout_post_edit"
@@ -135,11 +148,35 @@
         app:layout_constraintTop_toTopOf="@+id/post_location_tv" />
 
     <TextView
+        android:id="@+id/post_title_input_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/post_userprofile_imageview"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_post_username" />
+
+    <ImageButton
+        android:id="@+id/post_contact_imageButton"
+        android:layout_width="38dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/fui_ic_mail_white_24dp"
+        app:layout_constraintStart_toStartOf="@+id/post_description_tv"
+        app:layout_constraintTop_toBottomOf="@+id/post_description_tv"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <TextView
         android:id="@+id/post_date_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        android:fontFamily="@font/roboto_regular"
+        android:includeFontPadding="false"
         android:text="@string/post_date_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/post_userprofile_imageview" />
