@@ -1,6 +1,5 @@
 package com.example.foundyapp;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,11 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.navigation.Navigation;
 
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
@@ -38,13 +33,11 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 
 import com.example.foundyapp.model.Category;
-import com.example.foundyapp.model.City;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
 import com.example.foundyapp.model.User;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
@@ -141,14 +134,14 @@ public class AddPostFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
         currentUser = Model.instance.getCurrentUser();
-        progressBar = view.findViewById(R.id.add_progress);
+        progressBar = view.findViewById(R.id.edit_progress);
         progressBar.setVisibility(View.VISIBLE);
 
         saveBtn = view.findViewById(R.id.add_submitBtn);
         saveBtn.setOnClickListener(v -> savePost());
 
         nameTextView = view.findViewById(R.id.add_item_title_tf);
-        descriptionTextView = view.findViewById(R.id.add_desc_text);
+        descriptionTextView = view.findViewById(R.id.edit_desc_text);
 
         postType = AddPostFragmentArgs.fromBundle(getArguments()).getPostType();
 
@@ -250,7 +243,7 @@ public class AddPostFragment extends Fragment {
                 Log.i("Tag", "An error occurred: " + status);
             }
         });
-        itemImage = view.findViewById(R.id.add_image_upload);
+        itemImage = view.findViewById(R.id.edit_image_upload);
         itemImage.setOnClickListener(v -> {
             selectImage();
         });

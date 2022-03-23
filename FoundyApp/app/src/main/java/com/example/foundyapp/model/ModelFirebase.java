@@ -97,6 +97,17 @@ public class ModelFirebase {
 
     }
 
+    public void editPost(Post post)
+    {
+            DocumentReference p=db.collection(Post.COLLECTION_NAME).document(post.getPostId());
+                p.update("category", post.getCategory(),
+                        "description", post.getDescription(),
+                       "imageUrl",post.getImageUrl(),
+                        "title",post.getTitle(),
+                        "lastUpdated",post.getLastUpdated());
+
+    }
+
     public interface GetAllPostsListener{
         void onComplete(List<Post> list);
     }
@@ -124,6 +135,24 @@ public class ModelFirebase {
 
                     listener.onComplete(list);
                 }).addOnFailureListener(e -> listener.onComplete(null));
+    }
+
+    public void getPostById(String postid, Model.getPostByIdListener listener)
+    {
+        db.collection(Post.COLLECTION_NAME)
+                .document(postid)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        Post post= null;
+                        if (task.isSuccessful() & task.getResult()!=null){
+                            post= post.create(postid,task.getResult().getData());
+                        }
+                        listener.onComplete(post);
+                    }
+                });
+
     }
 
     public void getCurrentUserPosts(String userId, Long lastUpdateDate, GetAllPostsListener listener) {
