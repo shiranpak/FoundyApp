@@ -80,7 +80,7 @@ public class DrawerActivity extends AppCompatActivity {
         name_drawer=(TextView) header.findViewById(R.id.nameDrawer);
         email_drawer=(TextView) header.findViewById(R.id.emailText);
         ImageView avatar = header.findViewById(R.id.headerImage);
-        Model.instance.getUser(new Model.GetUserById(){
+        Model.instance.getCurrentUser(new Model.GetUserById(){
             @Override
             public void onComplete(User user) {
                 name_drawer.setText(user.getFullName());
