@@ -118,16 +118,15 @@ public class ModelFirebase {
     }
 
     public void getAllPosts(Long lastUpdateDate, GetAllPostsListener listener) {
-
         db.collection(Post.COLLECTION_NAME)
-           //     .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(lastUpdateDate, 0))
+                .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(lastUpdateDate, 0))
                 .get()
                 .addOnCompleteListener(task -> {
                     List<Post> list = new LinkedList<>();
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             Post post = Post.create(doc.getId(), doc.getData());
-                            if (post != null && !post.getIsDeleted()) {
+                            if (post != null) {
                                 list.add(post);
                             }
                         }

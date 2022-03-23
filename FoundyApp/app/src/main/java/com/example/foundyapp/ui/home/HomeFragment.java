@@ -40,6 +40,7 @@ public class HomeFragment extends Fragment {
     FragmentHomeBinding binding;
     SwipeRefreshLayout swipeRefresh;
     HomeViewModel homeViewModel;
+    TextView noPostsMsg;
     List<Post> allPostList;
     MyRecyclerViewAdapter adapter;
     private CurvedBottomNavigationView curvedBottomNavigationView;
@@ -67,12 +68,17 @@ public class HomeFragment extends Fragment {
 
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_home,container,false);
         RecyclerView rv = view.findViewById(R.id.home_posts_rv);
+
         swipeRefresh = view.findViewById(R.id.home_posts_swiperefresh);
         swipeRefresh.setOnRefreshListener(() -> Model.instance.refreshPostsList());
         addPostBtn = view.findViewById(R.id.add_post_btn);
-        allPostList = homeViewModel.getData().getValue();
+
+        noPostsMsg = view.findViewById(R.id.postsList_noPostsMessage);
+        noPostsMsg.setVisibility(View.GONE);
+
         adapter = new MyRecyclerViewAdapter(allPostList);
         adapter.notifyDataSetChanged();
+        rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(this.getContext()));
         rv.setAdapter(adapter);
         addPostBtn.setOnClickListener(new View.OnClickListener() {
@@ -82,8 +88,13 @@ public class HomeFragment extends Fragment {
                 navController.navigate(HomeFragmentDirections.actionNavHomeToAddPostTypeSelectFragment());
             }
         });
-        homeViewModel.getData().observe(getViewLifecycleOwner(), list1 -> refreshPostList());
+        homeViewModel.getData().observe(getViewLifecycleOwner(),
+                list1 -> {
+                    adapter.notifyDataSetChanged();
+                    noPostMessage();
+                });
         swipeRefresh.setRefreshing(Model.instance.getPostListLoadingState().getValue() == Model.ListLoadingState.loading);
+
         Model.instance.getPostListLoadingState().observe(getViewLifecycleOwner(), postListLoadingState -> {
             if (postListLoadingState == Model.ListLoadingState.loading){
                 swipeRefresh.setRefreshing(true);
@@ -93,7 +104,7 @@ public class HomeFragment extends Fragment {
 
         });
 
-        curvedBottomNavigationView = (CurvedBottomNavigationView)view.findViewById(R.id.bottom_navigation);
+        curvedBottomNavigationView = view.findViewById(R.id.bottom_navigation);
         curvedBottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.bottom_nav_losts_btn:
@@ -119,7 +130,16 @@ public class HomeFragment extends Fragment {
     private void refreshPostList() {
         adapter.notifyDataSetChanged();
     }
-
+    private void noPostMessage(){
+        if(homeViewModel.getData().getValue()!=null){
+            if(homeViewModel.getData().getValue().size() == 0)
+                noPostsMsg.setVisibility(View.VISIBLE);
+            else
+                noPostsMsg.setVisibility(View.GONE);
+        }
+        else
+            noPostsMsg.setVisibility(View.VISIBLE);
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
