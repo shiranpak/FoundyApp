@@ -173,6 +173,7 @@ public class HomeFragment extends Fragment {
         TextView location;
         TextView category;
         TextView description;
+        ImageView userProfileImage;
         TextView userName;
         ImageView postImage;
 
@@ -182,6 +183,7 @@ public class HomeFragment extends Fragment {
             location = itemView.findViewById(R.id.post_location_input_tv);
             category = itemView.findViewById(R.id.post_category_input_tv);
             description = itemView.findViewById(R.id.post_description_input_tv);
+            userProfileImage = itemView.findViewById(R.id.post_userprofile_imageview);
             userName = itemView.findViewById(R.id.post_username_textview);
             postImage=itemView.findViewById(R.id.post_imageview);
 

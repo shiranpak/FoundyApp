@@ -1,14 +1,12 @@
 package com.example.foundyapp.model;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.os.HandlerCompat;
@@ -93,6 +91,7 @@ public class Model {
     }
     MutableLiveData<ListLoadingState> postListLoadingState = new MutableLiveData<ListLoadingState>();
     MutableLiveData<List<Post>> postsList = new MutableLiveData<List<Post>>();
+    MutableLiveData<List<Post>> currentUserPostList = new MutableLiveData<List<Post>>();
 
     public LiveData<List<Post>> getAllPosts() {
         if (postsList.getValue() == null) {
@@ -146,6 +145,15 @@ public class Model {
         }
         return  null;
     }
+
+    public LiveData<List<Post>> getCurrentUserPostList() {
+
+        if (currentUserPostList.getValue() == null) {
+            refreshMyPostsList();
+        }
+        return currentUserPostList;
+    }
+
     public void refreshPostsList() {
         postListLoadingState.setValue(ListLoadingState.loading);
 
@@ -178,6 +186,43 @@ public class Model {
         });
     }
 
+    public void refreshMyPostsList() {
+
+        if(!modelFirebase.checkIfLoggedIn()) {
+            return;
+        }
+        String userId = Model.instance.getUid();
+        postListLoadingState.setValue(ListLoadingState.loading);
+
+        // get last local update date
+        Long localLastUpdate = Post.getLocalLastUpdated();
+
+        // firebase get all updates since lastLocalUpdateDate
+        modelFirebase.getCurrentUserPosts(userId,localLastUpdate, list -> {
+            // add all records to the local db
+            executor.execute(() -> {
+                Long lud = 0L;
+                for (Post post : list) {
+                    // post.address =  reversGeoCode(post.Location)
+                    AppLocalDb.db.postDao().insert(post);
+                    // if the post deleted in the firebase, delete him from the local db
+                    if (post.getIsDeleted())
+                        AppLocalDb.db.postDao().delete(post);
+                    if (post.getLastUpdated() > lud) {
+                        lud = post.getLastUpdated();
+                    }
+                }
+                // update last local update date
+                Post.setLocalLastUpdated(lud);
+
+                //return all data to caller
+                List<Post> ptList = AppLocalDb.db.postDao().GetCurrentUserPosts(userId);
+                currentUserPostList.postValue(ptList);
+                postListLoadingState.postValue(ListLoadingState.loaded);
+            });
+        });
+    }
+
     public void saveUserImage(Bitmap imageBitmap, String imageName, SaveImageListener listener) {
         modelFirebase.saveUserImage(imageBitmap, imageName, listener);
     }
@@ -191,9 +236,14 @@ public class Model {
         });
 
     }
-    public void getUser (GetUserById listener) {
-        modelFirebase.getUser(listener);
+    public void getCurrentUser(GetUserById listener) {
+        modelFirebase.getCurrentUser(listener);
     }
+
+    public String getUid(){
+        return modelFirebase.getUid();
+    }
+
     public void editUser( User user,EditUserListener listener){ modelFirebase.editUser( user,listener); }
     public void signOutFirebase (signOutUserListener listener) { modelFirebase.SignOut(listener); }
     public boolean loginCheck(){return modelFirebase.checkIfLoggedIn();}

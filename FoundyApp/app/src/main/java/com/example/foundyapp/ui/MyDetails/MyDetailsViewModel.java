@@ -16,7 +16,7 @@ public class MyDetailsViewModel extends ViewModel {
         fullName = new MutableLiveData<>();
         email = new MutableLiveData<>();
         image = new MutableLiveData<>();
-        Model.instance.getUser(user -> {
+        Model.instance.getCurrentUser(user -> {
             fullName.setValue(user.getFullName());
             email.setValue(user.getEmail());
             if (user.getImage()!=null){

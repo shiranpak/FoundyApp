@@ -75,7 +75,7 @@ public class Edit_user_Fragment extends Fragment {
         avatar=view.findViewById(R.id.user_image);
         nameEt = view.findViewById(R.id.edit_fullName);
         email=view.findViewById(R.id.edit_mail);
-        Model.instance.getUser(new Model.GetUserById() {
+        Model.instance.getCurrentUser(new Model.GetUserById() {
             @Override
             public void onComplete(User user) {
                 nameEt.setText(user.getFullName());

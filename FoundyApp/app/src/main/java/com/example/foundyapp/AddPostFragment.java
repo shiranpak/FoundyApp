@@ -40,6 +40,7 @@ import com.example.foundyapp.model.Category;
 import com.example.foundyapp.model.City;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
+import com.example.foundyapp.model.User;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -101,6 +102,7 @@ public class AddPostFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private User currentUser;
 
     public AddPostFragment() {
         // Required empty public constructor
@@ -137,6 +139,12 @@ public class AddPostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
+        Model.instance.getCurrentUser(new Model.GetUserById() {
+            @Override
+            public void onComplete(User user) {
+                currentUser = new User(user.getFullName(),user.getEmail(),user.getImage(),user.getUserId());
+            }
+        });
         progressBar = view.findViewById(R.id.add_progress);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -388,7 +396,7 @@ public class AddPostFragment extends Fragment {
         post.setDate(selectedDate);
         post.setType(postType);
         post.setIsDeleted(false);
-        post.setUserId("todo");
+        post.setUserId(currentUser.getUserId());
 
         if (imageBitmap == null) {
             Model.instance.addPost(post, () -> {
