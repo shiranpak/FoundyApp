@@ -73,7 +73,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
-            android:text="@string/post_username_textview"
             tools:layout_conversion_absoluteHeight="19dp"
             tools:layout_conversion_absoluteWidth="63dp"
             tools:layout_editor_absoluteX="0dp"

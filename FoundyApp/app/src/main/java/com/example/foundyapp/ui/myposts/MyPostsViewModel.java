@@ -22,7 +22,7 @@ public class MyPostsViewModel extends ViewModel {
 
     public MyPostsViewModel() {
         myPostsList = Model.instance.getCurrentUserPostList();
-
+        currentUser = Model.instance.getCurrentUser();
     }
 
     public LiveData<List<Post>> getMyPosts() {

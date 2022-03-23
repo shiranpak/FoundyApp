@@ -21,6 +21,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -38,7 +39,7 @@ public class DrawerActivity extends AppCompatActivity {
     private NavController navController;
     UserSession session;
     TextView name_drawer,email_drawer;
-
+    private LiveData<User> currentUser;
 
 
     @Override
@@ -61,12 +62,12 @@ public class DrawerActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-
         //create login session
         if (session.checkLogin())
         {
             finish();
         }
+        currentUser = Model.instance.getCurrentUser();
 
         navigationView.getMenu().findItem(R.id.Logout).setOnMenuItemClickListener(item -> {
             Model.instance.signOutFirebase(()->{});
@@ -80,17 +81,15 @@ public class DrawerActivity extends AppCompatActivity {
         name_drawer=(TextView) header.findViewById(R.id.nameDrawer);
         email_drawer=(TextView) header.findViewById(R.id.emailText);
         ImageView avatar = header.findViewById(R.id.headerImage);
-        Model.instance.getCurrentUser(new Model.GetUserById(){
-            @Override
-            public void onComplete(User user) {
+        currentUser.observe(this,user-> {
+            if (user != null) {
                 name_drawer.setText(user.getFullName());
                 email_drawer.setText(user.getEmail());
-                Picasso.get().load(user.getImage()).transform(new PicassoCircleTransformation()).into(avatar);
+                if (user.getImage() != null) {
+                    Picasso.get().load(user.getImage()).transform(new PicassoCircleTransformation()).into(avatar);
+                }
             }
         });
-
-
-
     }
 
     @Override

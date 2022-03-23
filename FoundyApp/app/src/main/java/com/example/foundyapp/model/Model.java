@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executor;
@@ -95,6 +96,29 @@ public class Model {
     MutableLiveData<ListLoadingState> postListLoadingState = new MutableLiveData<ListLoadingState>();
     MutableLiveData<List<Post>> postsList = new MutableLiveData<List<Post>>();
     MutableLiveData<List<Post>> currentUserPostList = new MutableLiveData<List<Post>>();
+    MutableLiveData<User> currentUser = new MutableLiveData<User>();
+    HashMap<String,MutableLiveData<User>> usersMap = new HashMap<>();
+
+
+    public LiveData<User> getUser(String id){
+        MutableLiveData<User> liveDataUser;
+        if(usersMap!=null && usersMap.containsKey(id)){
+            liveDataUser = usersMap.get(id);
+        }
+        else {
+            liveDataUser = new MutableLiveData<>();
+            modelFirebase.getUser(id, new GetUserById() {
+                @Override
+                public void onComplete(User user) {
+                    if (user!=null) {
+                        usersMap.put(id, liveDataUser);
+                        liveDataUser.postValue(user);
+                    }
+                }
+            });
+        }
+        return liveDataUser;
+    }
 
     public LiveData<List<Post>> getAllPosts() {
         return postsList;
@@ -167,6 +191,7 @@ public class Model {
                 Long lud = 0L;
                 for (Post post : list) {
                     // post.address =  reversGeoCode(post.Location)
+                    getUser(post.getUserId());
                     AppLocalDb.db.postDao().insert(post);
                     // if the post deleted in the firebase, delete him from the local db
                     if (post.getIsDeleted())
@@ -236,8 +261,21 @@ public class Model {
         });
 
     }
-    public void getCurrentUser(GetUserById listener) {
-        modelFirebase.getCurrentUser(listener);
+    public void refreshCurrentUser() {
+        modelFirebase.getCurrentUser(new GetUserById() {
+            @Override
+            public void onComplete(User user) {
+                currentUser.postValue(user);
+            }
+        });
+    }
+
+    public LiveData<User> getCurrentUser() {
+
+        if (currentUser.getValue() == null) {
+            refreshCurrentUser();
+        }
+        return currentUser;
     }
 
     public String getUid(){
