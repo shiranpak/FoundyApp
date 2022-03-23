@@ -233,12 +233,10 @@ public class HomeFragment extends Fragment {
             user.observe(getViewLifecycleOwner(),liveDataUser -> {
                 userName.setText(liveDataUser.getFullName());
                 contactInfo.setText(liveDataUser.getEmail());
-            });
-            if (user.getValue().getImage() != null) {
                 Picasso.get()
                         .load(user.getValue().getImage())
                         .into(userProfileImage);
-            }
+            });
 
             if (post.getImageUrl() != null) {
                 Picasso.get()
