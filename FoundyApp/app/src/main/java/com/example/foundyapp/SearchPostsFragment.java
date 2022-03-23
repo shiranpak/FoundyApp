@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,10 +14,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
+import com.example.foundyapp.model.User;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 
@@ -89,33 +95,59 @@ public class SearchPostsFragment extends Fragment {
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
+        TextView title;
         TextView date;
         TextView location;
         TextView category;
         TextView description;
         TextView userName;
+        ImageView userProfileImage;
+        ImageView postImage;
+        ImageButton contactBtn;
+        TextView contactInfo;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
+            title = itemView.findViewById(R.id.post_title_input_tv);
             date = itemView.findViewById(R.id.post_date_input_tv);
             location = itemView.findViewById(R.id.post_location_input_tv);
             category = itemView.findViewById(R.id.post_category_input_tv);
             description = itemView.findViewById(R.id.post_description_input_tv);
+            userProfileImage = itemView.findViewById(R.id.post_userprofile_imageview);
             userName = itemView.findViewById(R.id.post_username_textview);
+            postImage=itemView.findViewById(R.id.post_imageview);
+            contactBtn = itemView.findViewById(R.id.post_contact_imageButton);
+            contactBtn.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+                    contactInfo.setVisibility(View.VISIBLE);
+                }
+            } );
+            contactInfo = itemView.findViewById(R.id.post_contact_info_tv);
 
         }
 
-        public void bind(Post post) {
-            date.setText(post.getDate().toString());
-            //location.setText(post.getLocation());
+        public void bind(Post post){
+            title.setText(post.getTitle());
+            date.setText(post.getFormattedDate());
+            location.setText(post.getAddress());
             category.setText(post.getCategory());
             description.setText(post.getDescription());
-            userName.setText(post.getUserId());
-            /*if (student.getAvatarUrl() != null) {
+            LiveData<User> user = Model.instance.getUser(post.getUserId());
+            user.observe(getViewLifecycleOwner(),liveDataUser -> {
+                userName.setText(liveDataUser.getFullName());
+                contactInfo.setText(liveDataUser.getEmail());
                 Picasso.get()
-                        .load(student.getAvatarUrl())
-                        .into(avatarImv);
-            }*/
+                        .load(user.getValue().getImage())
+                        .into(userProfileImage);
+            });
+
+            if (post.getImageUrl() != null) {
+                Picasso.get()
+                        .load(post.getImageUrl())
+                        .into(postImage);
+            }
         }
     }
 }

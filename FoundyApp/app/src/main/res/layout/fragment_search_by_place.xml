@@ -25,7 +25,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Findings" />
+            android:text="Findings"
+            app:strokeColor="#000000" />
 
         <Button
             android:id="@+id/losts_toggle"
@@ -33,7 +34,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Losts" />
+            android:text="Losts"
+            app:strokeColor="#000000" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
 

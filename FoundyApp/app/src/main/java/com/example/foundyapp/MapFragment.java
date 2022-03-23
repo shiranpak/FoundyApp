@@ -3,6 +3,7 @@ package com.example.foundyapp;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -21,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -28,6 +31,7 @@ import androidx.navigation.Navigation;
 import com.example.foundyapp.model.Model;
 import com.example.foundyapp.model.Post;
 import com.example.foundyapp.model.PostViewModel;
+import com.example.foundyapp.model.User;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -36,6 +40,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -52,6 +57,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,15 +117,15 @@ public class MapFragment extends Fragment  {
             @Override
             public View getInfoContents(@NonNull Marker marker) {
                 // Inflate the layouts for the info window, title and snippet.
-                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
+                /*View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
                         (FrameLayout) getView().findViewById(R.id.map), false);
                 TextView title = infoWindow.findViewById(R.id.title);
                 title.setText(marker.getTitle());
 
                 TextView snippet = infoWindow.findViewById(R.id.snippet);
-                snippet.setText(marker.getSnippet());
+                snippet.setText(marker.getSnippet());*/
 
-                /*View infoWindow = getLayoutInflater().inflate(R.layout.custom_infowindow, null);
+                View infoWindow = getLayoutInflater().inflate(R.layout.custom_infowindow, null);
 
                 TextView title = infoWindow.findViewById(R.id.post_title_iw);
                 title.setText(marker.getTitle());
@@ -127,9 +133,30 @@ public class MapFragment extends Fragment  {
                 TextView snippet = infoWindow.findViewById(R.id.post_desc_iw);
                 snippet.setText(marker.getSnippet());
 
-                TextView user = infoWindow.findViewById(R.id.post_userInfo_iw);
-                user.setText(marker.get());*/
-
+                try {
+                    Post post = dictionary_Marker_Post.get(marker);
+                    /*MyApplication.executorService.execute(() -> {
+                        if (post != null && post.getImageUrl() != null) {
+                        ImageView imageView = infoWindow.findViewById(R.id.postPic);
+                        Picasso.get()
+                                .load(post.getImageUrl())
+                                .into(imageView);
+                    }});*/
+                    if (post != null && post.getImageUrl() != null) {
+                        ImageView imageView = infoWindow.findViewById(R.id.postPic);
+                        Picasso.get()
+                                .load(post.getImageUrl())
+                                .into(imageView);
+                    }
+                    LiveData<User> user = Model.instance.getUser(post.getUserId());
+                    user.observe(getViewLifecycleOwner(),liveDataUser -> {
+                        TextView contact = infoWindow.findViewById(R.id.post_userInfo_iw);
+                        contact.setText(user.getValue().getEmail());
+                    });
+                }
+                catch (Exception e) {
+                    Log.d("TAG", "Whoops");
+                }
                 return infoWindow;
             }
 
